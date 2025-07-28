@@ -3,163 +3,980 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al Ahly SC - Training Management</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/login.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Al Ahly SC - Sports Management System</title>
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .background-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(220, 20, 60, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .background-animation::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dc143c' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Login Container */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing);
+            position: relative;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        .floating-element:nth-child(4) {
+            bottom: 10%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+
+        /* Main Login Card */
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            animation: scaleIn 0.8s ease-out;
+            position: relative;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--bg-primary);
+        }
+
+        /* Header Section */
+        .login-header {
+            text-align: center;
+            padding: var(--spacing-2xl) var(--spacing-xl) var(--spacing-xl);
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.05) 0%, rgba(255, 255, 255, 0.1) 100%);
+        }
+
+        .logo-container {
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(220, 20, 60, 0.3);
+            animation: pulse 2s infinite;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid rgba(220, 20, 60, 0.3);
+            border-radius: var(--radius-full);
+            animation: pulse 2s infinite reverse;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            filter: brightness(0) invert(1);
+        }
+
+        .login-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 800;
+            background: var(--bg-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-sm);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .login-subtitle {
+            font-size: var(--font-size-base);
+            color: var(--gray-600);
+            font-weight: 500;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        /* Form Section */
+        .login-form {
+            padding: var(--spacing-xl);
+        }
+
+        .form-tabs {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            padding: 4px;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: var(--primary-white);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-bounce);
+        }
+
+        .tab-indicator.right {
+            transform: translateX(100%);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-red);
+        }
+
+        .form-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-panel {
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .form-panel.active {
+            opacity: 1;
+            transform: translateX(0);
+            position: relative;
+        }
+
+        .form-panel.exit-left {
+            transform: translateX(-100%);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing) var(--spacing-lg);
+            padding-left: 3rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+            background: var(--primary-white);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 4px rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: var(--spacing);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: var(--font-size-lg);
+            transition: var(--transition);
+        }
+
+        .form-input:focus + .input-icon {
+            color: var(--primary-red);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: var(--spacing);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            transition: var(--transition);
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-red);
+        }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .checkbox input {
+            opacity: 0;
+            position: absolute;
+        }
+
+        .checkbox input:checked + .checkmark {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+        }
+
+        .checkbox input:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary-white);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .forgot-link {
+            color: var(--primary-red);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .forgot-link:hover {
+            color: var(--dark-red);
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: var(--spacing) var(--spacing-lg);
+            background: var(--bg-primary);
+            color: var(--primary-white);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(220, 20, 60, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn.loading {
+            pointer-events: none;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid var(--primary-white);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .submit-btn.loading span {
+            opacity: 0;
+        }
+
+        /* Social Login */
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .divider span {
+            background: var(--primary-white);
+            color: var(--gray-500);
+            padding: 0 var(--spacing);
+            font-size: var(--font-size-sm);
+        }
+
+        .social-login {
+            display: flex;
+            gap: var(--spacing);
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: var(--spacing) var(--spacing-lg);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            background: var(--primary-white);
+            color: var(--gray-700);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+
+        .social-btn:hover {
+            border-color: var(--gray-300);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .social-btn.google:hover {
+            border-color: #4285f4;
+            color: #4285f4;
+        }
+
+        .social-btn.microsoft:hover {
+            border-color: #0078d4;
+            color: #0078d4;
+        }
+
+        /* Role Selection */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .role-card {
+            padding: var(--spacing);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            background: var(--primary-white);
+        }
+
+        .role-card:hover {
+            border-color: var(--primary-red);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .role-card.selected {
+            border-color: var(--primary-red);
+            background: var(--light-red);
+        }
+
+        .role-icon {
+            font-size: var(--font-size-xl);
+            color: var(--primary-red);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .role-title {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: var(--spacing-sm);
+            }
+
+            .login-card {
+                max-width: 100%;
+            }
+
+            .login-header {
+                padding: var(--spacing-xl) var(--spacing) var(--spacing);
+            }
+
+            .login-form {
+                padding: var(--spacing);
+            }
+
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo img {
+                width: 35px;
+                height: 35px;
+            }
+
+            .login-title {
+                font-size: var(--font-size-2xl);
+            }
+
+            .social-login {
+                flex-direction: column;
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Success Animation */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: var(--success);
+            stroke-miterlimit: 10;
+            margin: 10% auto;
+            box-shadow: inset 0px 0px 0px var(--success);
+            animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
+        }
+
+        .success-checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: var(--success);
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .success-checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes scale {
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 30px var(--success);
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="background-animation"></div>
+    
+    <!-- Floating Elements -->
+    <div class="floating-element">
+        <i class="fas fa-futbol" style="font-size: 3rem; color: rgba(220, 20, 60, 0.3);"></i>
+    </div>
+    <div class="floating-element">
+        <i class="fas fa-basketball-ball" style="font-size: 2.5rem; color: rgba(220, 20, 60, 0.2);"></i>
+    </div>
+    <div class="floating-element">
+        <i class="fas fa-trophy" style="font-size: 2rem; color: rgba(255, 215, 0, 0.3);"></i>
+    </div>
+    <div class="floating-element">
+        <i class="fas fa-medal" style="font-size: 2.5rem; color: rgba(255, 215, 0, 0.2);"></i>
+    </div>
+
     <div class="login-container">
-        <div class="login-left">
-            <div class="login-content">
-                <div class="logo-section">
-                    <img src="https://upload.wikimedia.org/wikipedia/en/4/41/Al_Ahly_SC_logo.png" alt="Al Ahly SC" class="logo">
-                    <h1>Al Ahly SC</h1>
-                    <p>Training Management System</p>
-                </div>
-                
-                <div class="login-form-container">
-                    <div class="form-tabs">
-                        <button class="tab-btn active" data-tab="login">Login</button>
-                        <button class="tab-btn" data-tab="signup">Sign Up</button>
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <div class="logo-container">
+                    <div class="logo">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/4/41/Al_Ahly_SC_logo.png" alt="Al Ahly SC">
                     </div>
-                    
-                    <form class="login-form active" id="login-form">
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" required>
-                            <i class="fas fa-envelope input-icon"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required>
-                            <i class="fas fa-lock input-icon"></i>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('password')"></i>
-                        </div>
-                        
-                        <div class="form-options">
-                            <label class="checkbox-container">
-                                <input type="checkbox" name="remember">
-                                <span class="checkmark"></span>
-                                Remember me
-                            </label>
-                            <a href="#" class="forgot-password" onclick="showForgotPassword()">Forgot Password?</a>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary">Login</button>
-                        
+                </div>
+                <h1 class="login-title">Al Ahly SC</h1>
+                <p class="login-subtitle">Sports Management System</p>
+            </div>
+
+            <!-- Form -->
+            <div class="login-form">
+                <!-- Tabs -->
+                <div class="form-tabs">
+                    <div class="tab-indicator" id="tabIndicator"></div>
+                    <button class="tab-btn active" data-tab="login" id="loginTab">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </button>
+                    <button class="tab-btn" data-tab="signup" id="signupTab">
+                        <i class="fas fa-user-plus"></i>
+                        Sign Up
+                    </button>
+                </div>
+
+                <!-- Form Container -->
+                <div class="form-container">
+                    <!-- Login Form -->
+                    <div class="form-panel active" id="loginPanel">
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <input type="email" class="form-input" placeholder="Email Address" required>
+                                <i class="fas fa-envelope input-icon"></i>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="password" class="form-input" placeholder="Password" required id="loginPassword">
+                                <i class="fas fa-lock input-icon"></i>
+                                <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <div class="form-options">
+                                <label class="checkbox-container">
+                                    <div class="checkbox">
+                                        <input type="checkbox">
+                                        <div class="checkmark"></div>
+                                    </div>
+                                    <span>Remember me</span>
+                                </label>
+                                <a href="#" class="forgot-link" onclick="showForgotPassword()">Forgot Password?</a>
+                            </div>
+
+                            <button type="submit" class="submit-btn">
+                                <span>Login to Dashboard</span>
+                            </button>
+                        </form>
+
                         <div class="divider">
                             <span>or continue with</span>
                         </div>
-                        
+
                         <div class="social-login">
-                            <button type="button" class="social-btn google">
+                            <button class="social-btn google">
                                 <i class="fab fa-google"></i>
                                 Google
                             </button>
-                            <button type="button" class="social-btn microsoft">
+                            <button class="social-btn microsoft">
                                 <i class="fab fa-microsoft"></i>
                                 Microsoft
                             </button>
                         </div>
-                    </form>
-                    
-                    <form class="login-form" id="signup-form">
-                        <div class="form-group">
-                            <label for="fullname">Full Name</label>
-                            <input type="text" id="fullname" name="fullname" required>
-                            <i class="fas fa-user input-icon"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="signup-email">Email Address</label>
-                            <input type="email" id="signup-email" name="email" required>
-                            <i class="fas fa-envelope input-icon"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="role">Role</label>
-                            <select id="role" name="role" required>
-                                <option value="">Select your role</option>
-                                <option value="coach">Coach</option>
-                                <option value="player">Player</option>
-                                <option value="manager">Manager</option>
-                                <option value="medical">Medical Staff</option>
-                            </select>
-                            <i class="fas fa-user-tag input-icon"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="signup-password">Password</label>
-                            <input type="password" id="signup-password" name="password" required>
-                            <i class="fas fa-lock input-icon"></i>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('signup-password')"></i>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="confirm-password">Confirm Password</label>
-                            <input type="password" id="confirm-password" name="confirm-password" required>
-                            <i class="fas fa-lock input-icon"></i>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirm-password')"></i>
-                        </div>
-                        
-                        <label class="checkbox-container">
-                            <input type="checkbox" name="terms" required>
-                            <span class="checkmark"></span>
-                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-                        </label>
-                        
-                        <button type="submit" class="btn-primary">Create Account</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <div class="login-right">
-            <div class="hero-content">
-                <h2>Welcome to Al Ahly SC Training Management</h2>
-                <p>Manage your teams, track performance, and elevate your training to championship levels.</p>
-                <div class="features">
-                    <div class="feature">
-                        <i class="fas fa-users"></i>
-                        <span>Team Management</span>
                     </div>
-                    <div class="feature">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Session Scheduling</span>
-                    </div>
-                    <div class="feature">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Performance Analytics</span>
+
+                    <!-- Signup Form -->
+                    <div class="form-panel" id="signupPanel">
+                        <form id="signupForm">
+                            <div class="form-group">
+                                <input type="text" class="form-input" placeholder="Full Name" required>
+                                <i class="fas fa-user input-icon"></i>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="email" class="form-input" placeholder="Email Address" required>
+                                <i class="fas fa-envelope input-icon"></i>
+                            </div>
+
+                            <!-- Role Selection -->
+                            <div class="form-group">
+                                <div class="role-grid">
+                                    <div class="role-card" data-role="coach">
+                                        <div class="role-icon">
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                        </div>
+                                        <div class="role-title">Coach</div>
+                                    </div>
+                                    <div class="role-card" data-role="player">
+                                        <div class="role-icon">
+                                            <i class="fas fa-running"></i>
+                                        </div>
+                                        <div class="role-title">Player</div>
+                                    </div>
+                                    <div class="role-card" data-role="manager">
+                                        <div class="role-icon">
+                                            <i class="fas fa-users-cog"></i>
+                                        </div>
+                                        <div class="role-title">Manager</div>
+                                    </div>
+                                    <div class="role-card" data-role="medical">
+                                        <div class="role-icon">
+                                            <i class="fas fa-user-md"></i>
+                                        </div>
+                                        <div class="role-title">Medical</div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="selectedRole" required>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="password" class="form-input" placeholder="Password" required id="signupPassword">
+                                <i class="fas fa-lock input-icon"></i>
+                                <button type="button" class="password-toggle" onclick="togglePassword('signupPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="password" class="form-input" placeholder="Confirm Password" required id="confirmPassword">
+                                <i class="fas fa-lock input-icon"></i>
+                                <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <div class="form-options">
+                                <label class="checkbox-container">
+                                    <div class="checkbox">
+                                        <input type="checkbox" required>
+                                        <div class="checkmark"></div>
+                                    </div>
+                                    <span>I agree to the <a href="#" class="forgot-link">Terms & Conditions</a></span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="submit-btn">
+                                <span>Create Account</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Forgot Password Modal -->
-    <div class="modal" id="forgot-password-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Reset Password</h3>
-                <span class="close" onclick="closeForgotPassword()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>Enter your email address and we'll send you a link to reset your password.</p>
-                <form id="forgot-password-form">
-                    <div class="form-group">
-                        <label for="reset-email">Email Address</label>
-                        <input type="email" id="reset-email" name="email" required>
-                        <i class="fas fa-envelope input-icon"></i>
-                    </div>
-                    <button type="submit" class="btn-primary">Send Reset Link</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <script src="scripts/login.js"></script>
+
+    <script>
+        // Tab switching functionality
+        const loginTab = document.getElementById('loginTab');
+        const signupTab = document.getElementById('signupTab');
+        const tabIndicator = document.getElementById('tabIndicator');
+        const loginPanel = document.getElementById('loginPanel');
+        const signupPanel = document.getElementById('signupPanel');
+
+        function switchTab(tab) {
+            // Remove active classes
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.form-panel').forEach(panel => {
+                panel.classList.remove('active');
+                panel.classList.add('exit-left');
+            });
+
+            // Add active class to clicked tab
+            tab.classList.add('active');
+
+            // Move indicator
+            if (tab.dataset.tab === 'signup') {
+                tabIndicator.classList.add('right');
+                setTimeout(() => {
+                    signupPanel.classList.remove('exit-left');
+                    signupPanel.classList.add('active');
+                }, 250);
+            } else {
+                tabIndicator.classList.remove('right');
+                setTimeout(() => {
+                    loginPanel.classList.remove('exit-left');
+                    loginPanel.classList.add('active');
+                }, 250);
+            }
+        }
+
+        loginTab.addEventListener('click', () => switchTab(loginTab));
+        signupTab.addEventListener('click', () => switchTab(signupTab));
+
+        // Password toggle functionality
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Role selection
+        document.querySelectorAll('.role-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selectedRole').value = this.dataset.role;
+            });
+        });
+
+        // Form submissions
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = this.querySelector('.submit-btn');
+            
+            // Add loading state
+            submitBtn.classList.add('loading');
+            
+            // Simulate login process
+            setTimeout(() => {
+                // Determine redirect based on role (for demo purposes, using coach)
+                const role = 'coach'; // This would come from the login response
+                
+                switch(role) {
+                    case 'coach':
+                        window.location.href = 'coach-dashboard.html';
+                        break;
+                    case 'player':
+                        window.location.href = 'player-dashboard.html';
+                        break;
+                    case 'manager':
+                        window.location.href = 'dashboard.html';
+                        break;
+                    case 'medical':
+                        window.location.href = 'medical-dashboard.html';
+                        break;
+                    default:
+                        window.location.href = 'dashboard.html';
+                }
+            }, 2000);
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = this.querySelector('.submit-btn');
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const selectedRole = document.getElementById('selectedRole').value;
+
+            // Validation
+            if (!selectedRole) {
+                showNotification('Please select your role', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            // Add loading state
+            submitBtn.classList.add('loading');
+            
+            // Simulate signup process
+            setTimeout(() => {
+                showNotification('Account created successfully!', 'success');
+                submitBtn.classList.remove('loading');
+                
+                // Switch to login tab
+                setTimeout(() => {
+                    switchTab(loginTab);
+                }, 1000);
+            }, 2000);
+        });
+
+        // Forgot password
+        function showForgotPassword() {
+            showNotification('Password reset link sent to your email!', 'info');
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--info)'};
+                color: white;
+                padding: var(--spacing) var(--spacing-lg);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow-lg);
+                z-index: 10000;
+                font-size: var(--font-size-sm);
+                font-weight: 500;
+                animation: slideInRight 0.4s ease-out;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease-in reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add entrance animations to form elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const formElements = document.querySelectorAll('.form-group');
+            formElements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.animation = `fadeInUp 0.6s ease-out ${0.1 * index}s forwards`;
+            });
+        });
+
+        // Social login handlers
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const provider = this.classList.contains('google') ? 'Google' : 'Microsoft';
+                showNotification(`${provider} login coming soon!`, 'info');
+            });
+        });
+    </script>
 </body>
 </html>
