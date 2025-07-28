@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball Control Under Pressure - Drill Detail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #f8fafc;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            background: white;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #f9fafb;
+            color: #374151;
+        }
+
+        .title-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .badges {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #374151;
+        }
+
+        .badge.difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .badge.difficulty-medium {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+
+        .badge.difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .star {
+            width: 1rem;
+            height: 1rem;
+            color: #fbbf24;
+            fill: currentColor;
+        }
+
+        .star.empty {
+            color: #d1d5db;
+            fill: none;
+        }
+
+        .rating-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-left: 0.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-outline {
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #374151;
+        }
+
+        .btn-outline:hover {
+            background: #f9fafb;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        }
+
+        .btn i {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 0;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        /* Video Section */
+        .video-container {
+            position: relative;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 24rem;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-btn {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 0.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .play-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .download-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Quick Info Grid */
+        .quick-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .info-icon {
+            width: 2rem;
+            height: 2rem;
+            margin: 0 auto 0.5rem;
+        }
+
+        .info-icon.clock { color: #3b82f6; }
+        .info-icon.users { color: #10b981; }
+        .info-icon.target { color: #8b5cf6; }
+
+        .info-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Tabs */
+        .tabs {
+            margin-bottom: 2rem;
+        }
+
+        .tabs-list {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-trigger {
+            padding: 0.75rem 1rem;
+            border: none;
+            background: none;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .tab-trigger:hover {
+            color: #374151;
+        }
+
+        .tab-trigger.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Lists */
+        .equipment-list, .coaching-points {
+            list-style: none;
+            padding: 0;
+        }
+
+        .equipment-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .equipment-list .bullet {
+            width: 0.5rem;
+            height: 0.5rem;
+            background: #3b82f6;
+            border-radius: 50%;
+        }
+
+        .coaching-points li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .coaching-points .icon {
+            width: 1rem;
+            height: 1rem;
+            color: #10b981;
+            margin-top: 0.125rem;
+        }
+
+        /* Instructions */
+        .instructions-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instruction-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .instruction-number {
+            width: 2rem;
+            height: 2rem;
+            background: #dbeafe;
+            color: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* Variations */
+        .variations-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .variation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .variation-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            background: #dcfce7;
+            color: #16a34a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Comments */
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .comment {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .comment-meta {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.125rem;
+        }
+
+        .comment-date {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .comment-rating {
+            display: flex;
+            gap: 0.125rem;
+        }
+
+        .comment-text {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        /* Related Drills */
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .related-card {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .related-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .related-thumbnail {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .related-content {
+            padding: 1rem;
+        }
+
+        .related-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .related-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .title-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .badges {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Interactive enhancements */
+        .like-btn {
+            transition: all 0.3s ease;
+        }
+
+        .like-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .like-btn.liked {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .like-btn.liked i {
+            fill: currentColor;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Progress bar for video */
+        .video-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: #3b82f6;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111827;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        /* Enhanced hover effects */
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <a href="#" class="back-btn" onclick="goBack()">
+                    <i data-lucide="arrow-left"></i>
+                </a>
+                <div class="title-section">
+                    <h1>Ball Control Under Pressure</h1>
+                    <div class="badges">
+                        <span class="badge">Football</span>
+                        <span class="badge">Technical</span>
+                        <span class="badge difficulty-medium">Medium</span>
+                        <div class="rating">
+                            <i data-lucide="star" class="star"></i>
+                            <i data-lucide="star" class="star"></i>
+                            <i data-lucide="star" class="star"></i>
+                            <i data-lucide="star" class="star"></i>
+                            <i data-lucide="star" class="star empty"></i>
+                            <span class="rating-text">4.5 (23 uses)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline like-btn" id="likeBtn" onclick="toggleLike()">
+                    <i data-lucide="heart"></i>
+                    <span id="likeCount">45</span>
+                </button>
+                <button class="btn btn-outline" onclick="shareDrill()">
+                    <i data-lucide="share-2"></i>
+                    Share
+                </button>
+                <button class="btn btn-outline" onclick="editDrill()">
+                    <i data-lucide="edit"></i>
+                    Edit
+                </button>
+            </div>
+        </div>
+
+        <!-- Video/Image Section -->
+        <div class="card">
+            <div class="card-content" style="padding: 0;">
+                <div class="video-container">
+                    <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=400&fit=crop" 
+                         alt="Ball Control Under Pressure" class="video-thumbnail" id="videoThumbnail">
+                    <div class="video-overlay" id="videoOverlay">
+                        <button class="play-btn" onclick="playVideo()">
+                            <i data-lucide="play"></i>
+                            Watch Video
+                        </button>
+                    </div>
+                    <button class="download-btn tooltip" data-tooltip="Download video" onclick="downloadVideo()">
+                        <i data-lucide="download"></i>
+                    </button>
+                    <div class="video-progress" id="videoProgress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="quick-info">
+            <div class="card">
+                <div class="info-card">
+                    <i data-lucide="clock" class="info-icon clock"></i>
+                    <p class="info-label">Duration</p>
+                    <p class="info-value">15 mins</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="info-card">
+                    <i data-lucide="users" class="info-icon users"></i>
+                    <p class="info-label">Players</p>
+                    <p class="info-value">8-12 players</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="info-card">
+                    <i data-lucide="target" class="info-icon target"></i>
+                    <p class="info-label">Difficulty</p>
+                    <p class="info-value">Medium</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="tabs">
+            <div class="tabs-list">
+                <button class="tab-trigger active" onclick="switchTab('overview')">Overview</button>
+                <button class="tab-trigger" onclick="switchTab('instructions')">Instructions</button>
+                <button class="tab-trigger" onclick="switchTab('variations')">Variations</button>
+                <button class="tab-trigger" onclick="switchTab('comments')">Comments</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overview">
+                <div class="content-grid">
+                    <div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Description</h3>
+                            </div>
+                            <div class="card-content">
+                                <p style="margin-bottom: 1.5rem; color: #6b7280;">
+                                    This drill focuses on improving ball control skills while under defensive pressure from opponents. 
+                                    Players will learn to maintain possession in tight spaces and make quick decisions under pressure.
+                                </p>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h4 style="font-weight: 600; color: #111827; margin-bottom: 0.75rem;">Equipment Needed</h4>
+                                    <ul class="equipment-list">
+                                        <li><div class="bullet"></div><span style="color: #6b7280;">10-15 cones</span></li>
+                                        <li><div class="bullet"></div><span style="color: #6b7280;">4-6 footballs</span></li>
+                                        <li><div class="bullet"></div><span style="color: #6b7280;">Bibs for defenders</span></li>
+                                        <li><div class="bullet"></div><span style="color: #6b7280;">Stopwatch</span></li>
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <h4 style="font-weight: 600; color: #111827; margin-bottom: 0.75rem;">Key Coaching Points</h4>
+                                    <ul class="coaching-points">
+                                        <li><i data-lucide="target" class="icon"></i><span style="color: #6b7280;">Keep the ball close to your body</span></li>
+                                        <li><i data-lucide="target" class="icon"></i><span style="color: #6b7280;">Use your body to shield the ball</span></li>
+                                        <li><i data-lucide="target" class="icon"></i><span style="color: #6b7280;">Keep your head up to see defenders</span></li>
+                                        <li><i data-lucide="target" class="icon"></i><span style="color: #6b7280;">Make quick decisions</span></li>
+                                        <li><i data-lucide="target" class="icon"></i><span style="color: #6b7280;">Use both feet effectively</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Drill Information</h3>
+                            </div>
+                            <div class="card-content">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                                    <div class="avatar">MJ</div>
+                                    <div>
+                                        <p style="font-weight: 500; color: #111827;">Mike Johnson</p>
+                                        <p style="font-size: 0.875rem; color: #6b7280;">Created 2024-01-15</p>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                        <span style="font-size: 0.875rem; color: #6b7280;">Times Used</span>
+                                        <span style="font-size: 0.875rem; font-weight: 500;">23</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                        <span style="font-size: 0.875rem; color: #6b7280;">Likes</span>
+                                        <span style="font-size: 0.875rem; font-weight: 500;" id="sidebarLikes">45</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="font-size: 0.875rem; color: #6b7280;">Rating</span>
+                                        <div class="rating">
+                                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                            <i data-lucide="star" class="star empty" style="width: 0.875rem; height: 0.875rem;"></i>
+                                            <span style="font-size: 0.875rem; font-weight: 500; margin-left: 0.25rem;">4.5</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding-top: 1rem; border-top: 1px solid #e5e7eb; margin-bottom: 1.5rem;">
+                                    <h4 style="font-weight: 600; color: #111827; margin-bottom: 0.75rem;">Tags</h4>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                        <span class="badge" style="font-size: 0.75rem;">ball-control</span>
+                                        <span class="badge" style="font-size: 0.75rem;">pressure</span>
+                                        <span class="badge" style="font-size: 0.75rem;">technical</span>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary" style="width: 100%;" onclick="addToSession()">
+                                    <i data-lucide="calendar"></i>
+                                    Add to Session
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions Tab -->
+            <div class="tab-content" id="instructions">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Step-by-Step Instructions</h3>
+                        <p class="card-description">Follow these steps to set up and run the drill</p>
+                    </div>
+                    <div class="card-content">
+                        <ul class="instructions-list">
+                            <li class="instruction-item">
+                                <div class="instruction-number">1</div>
+                                <p style="color: #6b7280; padding-top: 0.25rem;">Set up a 20x20 yard square with cones</p>
+                            </li>
+                            <li class="instruction-item">
+                                <div class="instruction-number">2</div>
+                                <p style="color: #6b7280; padding-top: 0.25rem;">Place 6-8 players inside the square with balls</p>
+                            </li>
+                            <li class="instruction-item">
+                                <div class="instruction-number">3</div>
+                                <p style="color: #6b7280; padding-top: 0.25rem;">2-4 players act as defenders without balls</p>
+                            </li>
+                            <li class="instruction-item">
+                                <div class="instruction-number">4</div>
+                                <p style="color: #6b7280; padding-top: 0.25rem;">Players with balls must keep possession for 30 seconds</p>
+                            </li>
+                            <li class="instruction-item">
+                                <div class="instruction-number">5</div>
+                                <p style="color: #6b7280; padding-top: 0.25rem;">Defenders try to win the ball and kick it out</p>
+                            </li>
+                            <li class="instruction-item">
+                                <div class="instruction-number">6</div>
+                                <p style="color: #6b7280; padding-top: 0.25rem;">Rotate roles every 2 minutes</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variations Tab -->
+            <div class="tab-content" id="variations">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Drill Variations</h3>
+                        <p class="card-description">Modify the drill to increase difficulty or focus on specific skills</p>
+                    </div>
+                    <div class="card-content">
+                        <ul class="variations-list">
+                            <li class="variation-item">
+                                <div class="variation-icon">
+                                    <i data-lucide="plus" style="width: 0.75rem; height: 0.75rem;"></i>
+                                </div>
+                                <p style="color: #6b7280;">Reduce the size of the square to increase difficulty</p>
+                            </li>
+                            <li class="variation-item">
+                                <div class="variation-icon">
+                                    <i data-lucide="plus" style="width: 0.75rem; height: 0.75rem;"></i>
+                                </div>
+                                <p style="color: #6b7280;">Add more defenders to create more pressure</p>
+                            </li>
+                            <li class="variation-item">
+                                <div class="variation-icon">
+                                    <i data-lucide="plus" style="width: 0.75rem; height: 0.75rem;"></i>
+                                </div>
+                                <p style="color: #6b7280;">Limit touches (2-touch, 1-touch)</p>
+                            </li>
+                            <li class="variation-item">
+                                <div class="variation-icon">
+                                    <i data-lucide="plus" style="width: 0.75rem; height: 0.75rem;"></i>
+                                </div>
+                                <p style="color: #6b7280;">Add specific skills (only use weak foot)</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Tab -->
+            <div class="tab-content" id="comments">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="comments-header">
+                            <div>
+                                <h3 class="card-title">Comments & Reviews</h3>
+                                <p class="card-description">See what other coaches think about this drill</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="addComment()">
+                                <i data-lucide="message-square"></i>
+                                Add Comment
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="commentsList">
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <div class="avatar">SW</div>
+                                    <div class="comment-meta">
+                                        <div class="comment-author">Sarah Williams</div>
+                                        <div class="comment-date">2024-01-20</div>
+                                    </div>
+                                    <div class="comment-rating">
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                    </div>
+                                </div>
+                                <p class="comment-text">
+                                    Excellent drill! My players really improved their ball control after using this regularly. 
+                                    The pressure element makes it very realistic.
+                                </p>
+                            </div>
+
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <div class="avatar">DC</div>
+                                    <div class="comment-meta">
+                                        <div class="comment-author">David Chen</div>
+                                        <div class="comment-date">2024-01-18</div>
+                                    </div>
+                                    <div class="comment-rating">
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star empty" style="width: 0.875rem; height: 0.875rem;"></i>
+                                    </div>
+                                </div>
+                                <p class="comment-text">
+                                    Great drill for technical development. I modified it slightly by adding time pressure and it worked even better.
+                                </p>
+                            </div>
+
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <div class="avatar">ET</div>
+                                    <div class="comment-meta">
+                                        <div class="comment-author">Emma Thompson</div>
+                                        <div class="comment-date">2024-01-16</div>
+                                    </div>
+                                    <div class="comment-rating">
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                        <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                                    </div>
+                                </div>
+                                <p class="comment-text">
+                                    Perfect for youth players. The competitive element keeps them engaged throughout the session.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Drills -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Related Drills</h3>
+                <p class="card-description">You might also like these drills</p>
+            </div>
+            <div class="card-content">
+                <div class="related-grid">
+                    <div class="card related-card" onclick="viewDrill(2)">
+                        <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=150&fit=crop" 
+                             alt="Passing Accuracy Drill" class="related-thumbnail">
+                        <div class="related-content">
+                            <h4 class="related-title">Passing Accuracy Drill</h4>
+                            <div class="related-meta">
+                                <span class="badge difficulty-easy">Easy</span>
+                                <span>20 mins</span>
+                                <div class="rating">
+                                    <i data-lucide="star" class="star" style="width: 0.75rem; height: 0.75rem;"></i>
+                                    <span style="font-size: 0.75rem;">4.8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card related-card" onclick="viewDrill(3)">
+                        <img src="https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=300&h=150&fit=crop" 
+                             alt="1v1 Attacking" class="related-thumbnail">
+                        <div class="related-content">
+                            <h4 class="related-title">1v1 Attacking</h4>
+                            <div class="related-meta">
+                                <span class="badge difficulty-medium">Medium</span>
+                                <span>18 mins</span>
+                                <div class="rating">
+                                    <i data-lucide="star" class="star" style="width: 0.75rem; height: 0.75rem;"></i>
+                                    <span style="font-size: 0.75rem;">4.3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card related-card" onclick="viewDrill(4)">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=150&fit=crop" 
+                             alt="Quick Feet Agility" class="related-thumbnail">
+                        <div class="related-content">
+                            <h4 class="related-title">Quick Feet Agility</h4>
+                            <div class="related-meta">
+                                <span class="badge difficulty-hard">Hard</span>
+                                <span>12 mins</span>
+                                <div class="rating">
+                                    <i data-lucide="star" class="star" style="width: 0.75rem; height: 0.75rem;"></i>
+                                    <span style="font-size: 0.75rem;">4.1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            initializeInteractivity();
+        });
+
+        // Application state
+        let isLiked = false;
+        let likeCount = 45;
+        let isVideoPlaying = false;
+        let videoProgress = 0;
+
+        function initializeInteractivity() {
+            // Add smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Add fade-in animation to cards
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        function switchTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab-trigger').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Add active class to clicked tab and corresponding content
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            // Re-initialize icons for the new content
+            lucide.createIcons();
+        }
+
+        function toggleLike() {
+            const likeBtn = document.getElementById('likeBtn');
+            const likeCountElement = document.getElementById('likeCount');
+            const sidebarLikes = document.getElementById('sidebarLikes');
+            
+            isLiked = !isLiked;
+            
+            if (isLiked) {
+                likeCount++;
+                likeBtn.classList.add('liked');
+                // Add animation
+                likeBtn.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    likeBtn.style.transform = 'scale(1)';
+                }, 200);
+            } else {
+                likeCount--;
+                likeBtn.classList.remove('liked');
+            }
+            
+            likeCountElement.textContent = likeCount;
+            sidebarLikes.textContent = likeCount;
+        }
+
+        function shareDrill() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Ball Control Under Pressure - Drill',
+                    text: 'Check out this football drill for improving ball control skills!',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    showNotification('Link copied to clipboard!');
+                });
+            }
+        }
+
+        function editDrill() {
+            showNotification('Edit functionality would open the drill editor');
+        }
+
+        function playVideo() {
+            const overlay = document.getElementById('videoOverlay');
+            const progress = document.getElementById('videoProgress');
+            
+            if (!isVideoPlaying) {
+                isVideoPlaying = true;
+                overlay.style.display = 'none';
+                
+                // Simulate video progress
+                const interval = setInterval(() => {
+                    videoProgress += 2;
+                    progress.style.width = videoProgress + '%';
+                    
+                    if (videoProgress >= 100) {
+                        clearInterval(interval);
+                        isVideoPlaying = false;
+                        videoProgress = 0;
+                        overlay.style.display = 'flex';
+                        progress.style.width = '0%';
+                    }
+                }, 100);
+            }
+        }
+
+        function downloadVideo() {
+            showNotification('Video download started!');
+            // Simulate download
+            const btn = event.target.closest('.download-btn');
+            btn.innerHTML = '<div class="spinner"></div>';
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i data-lucide="download"></i>';
+                lucide.createIcons();
+                showNotification('Video downloaded successfully!');
+            }, 2000);
+        }
+
+        function addToSession() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            
+            btn.classList.add('loading');
+            btn.innerHTML = '<div class="spinner"></div> Adding...';
+            
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.innerHTML = '<i data-lucide="check"></i> Added to Session';
+                btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                    lucide.createIcons();
+                }, 2000);
+            }, 1500);
+        }
+
+        function addComment() {
+            const commentText = prompt('Enter your comment:');
+            if (commentText && commentText.trim()) {
+                const commentsList = document.getElementById('commentsList');
+                const newComment = document.createElement('div');
+                newComment.className = 'comment fade-in';
+                newComment.innerHTML = `
+                    <div class="comment-header">
+                        <div class="avatar">YU</div>
+                        <div class="comment-meta">
+                            <div class="comment-author">You</div>
+                            <div class="comment-date">${new Date().toISOString().split('T')[0]}</div>
+                        </div>
+                        <div class="comment-rating">
+                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                            <i data-lucide="star" class="star" style="width: 0.875rem; height: 0.875rem;"></i>
+                        </div>
+                    </div>
+                    <p class="comment-text">${commentText}</p>
+                `;
+                commentsList.insertBefore(newComment, commentsList.firstChild);
+                lucide.createIcons();
+                showNotification('Comment added successfully!');
+            }
+        }
+
+        function viewDrill(drillId) {
+            showNotification(`Loading drill ${drillId}...`);
+            // Simulate navigation
+            setTimeout(() => {
+                showNotification(`Drill ${drillId} loaded!`);
+            }, 1000);
+        }
+
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                showNotification('No previous page to go back to');
+            }
+        }
+
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #111827;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            `;
+            notification.textContent = message;
+            
+            // Add slide-in animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                    document.head.removeChild(style);
+                }, 300);
+            }, 3000);
+        }
+
+        // Enhanced interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add click effects to buttons
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+
+            // Add keyboard navigation for tabs
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    const tabs = document.querySelectorAll('.tab-trigger');
+                    const activeTab = document.querySelector('.tab-trigger.active');
+                    const currentIndex = Array.from(tabs).indexOf(activeTab);
+                    
+                    let newIndex;
+                    if (e.key === 'ArrowLeft') {
+                        newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+                    } else {
+                        newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+                    }
+                    
+                    tabs[newIndex].click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

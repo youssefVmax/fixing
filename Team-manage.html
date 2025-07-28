@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Football Team Picker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #37003c;
+            --secondary: #00ff87;
+            --accent: #7d00a3;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --gray: #8d99ae;
+            --light-gray: #e2e8f0;
+            --border-radius: 12px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a0030 0%, #2d004d 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(55, 0, 60, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 255, 135, 0.2);
+            box-shadow: var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .header-top h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--secondary), #8effc1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .deadline {
+            background: rgba(0, 255, 135, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .chips {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            flex: 1;
+            min-width: 150px;
+            background: rgba(55, 0, 60, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--accent);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .chip.active {
+            background: var(--accent);
+            border-color: var(--secondary);
+        }
+
+        .chip.unavailable {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .chip h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: var(--secondary);
+        }
+
+        .chip.active h3 {
+            color: white;
+        }
+
+        .chip-status {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .chip.active .chip-status {
+            color: var(--secondary);
+        }
+
+        .team-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .team-pitch {
+            background: linear-gradient(135deg, #14532d, #15803d);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pitch-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            pointer-events: none;
+        }
+
+        .position-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .player-card {
+            background: rgba(30, 30, 40, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            width: 140px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            z-index: 10;
+            position: relative;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+            box-shadow: 0 5px 15px rgba(0, 255, 135, 0.2);
+        }
+
+        .player-card.selected {
+            border-color: var(--secondary);
+            background: rgba(0, 255, 135, 0.1);
+        }
+
+        .player-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--primary);
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--secondary);
+            overflow: hidden;
+        }
+
+        .player-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-details {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .player-fixture {
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .player-fixture.home {
+            color: var(--secondary);
+        }
+
+        .player-fixture.away {
+            color: #ff7b00;
+        }
+
+        .position-label {
+            text-align: center;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-top: -15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bench {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .bench .player-card {
+            width: 120px;
+        }
+
+        .player-list {
+            background: rgba(55, 0, 60, 0.8);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .player-list-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .player-list-header h2 {
+            font-size: 1.3rem;
+            color: var(--secondary);
+        }
+
+        .position-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .position-filter {
+            padding: 5px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .position-filter.active {
+            background: var(--secondary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: var(--gray);
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .list-player-card {
+            background: rgba(30, 30, 40, 0.9);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .list-player-card:hover {
+            transform: translateY(-3px);
+            border: 1px solid var(--secondary);
+        }
+
+        .list-player-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            overflow: hidden;
+        }
+
+        .list-player-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .list-player-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .list-player-details {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 3px;
+        }
+
+        .list-player-fixture {
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .action-btn:hover {
+            background: var(--secondary);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 900px) {
+            .team-container {
+                grid-template-columns: 1fr;
+            }
+            .position-row {
+                flex-wrap: wrap;
+                gap: 15px;
+                justify-content: center;
+            }
+            .bench {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .chips {
+                flex-direction: column;
+            }
+            .player-card {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="header-top">
+                <h1>Pick Team</h1>
+                <div class="deadline">Gameweek 1 · Deadline: Fri 15 Aug, 20:30</div>
+            </div>
+            
+            <div class="chips">
+                <div class="chip active">
+                    <h3>Bench Boost</h3>
+                    <div class="chip-status">Play</div>
+                </div>
+                <div class="chip">
+                    <h3>Triple Captain</h3>
+                    <div class="chip-status">Play</div>
+                </div>
+                <div class="chip unavailable">
+                    <h3>Wildcard</h3>
+                    <div class="chip-status">Unavailable</div>
+                </div>
+                <div class="chip unavailable">
+                    <h3>Free Hit</h3>
+                    <div class="chip-status">Unavailable</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="team-container">
+            <div class="team-pitch">
+                <div class="pitch-lines"></div>
+                
+                <!-- Goalkeeper -->
+                <div class="position-row">
+                    <div class="player-card selected" data-position="gkp" data-id="1">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Kelleher</div>
+                        <div class="player-details">£4.5m · NFO</div>
+                        <div class="player-fixture away">(A)</div>
+                    </div>
+                </div>
+                
+                <!-- Defenders -->
+                <div class="position-label">Defenders</div>
+                <div class="position-row">
+                    <div class="player-card selected" data-position="def" data-id="2">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Colwill</div>
+                        <div class="player-details">£5.0m · CRY</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                    
+                    <div class="player-card selected" data-position="def" data-id="3">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Gvardiol</div>
+                        <div class="player-details">£5.5m · WOL</div>
+                        <div class="player-fixture away">(A)</div>
+                    </div>
+                    
+                    <div class="player-card selected" data-position="def" data-id="4">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Frimpong</div>
+                        <div class="player-details">£6.0m · BOU</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                    
+                    <div class="player-card selected" data-position="def" data-id="5">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Wan-Bissaka</div>
+                        <div class="player-details">£4.5m · SUN</div>
+                        <div class="player-fixture away">(A)</div>
+                    </div>
+                </div>
+                
+                <!-- Midfielders -->
+                <div class="position-label">Midfielders</div>
+                <div class="position-row">
+                    <div class="player-card selected" data-position="mid" data-id="6">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Ndiaye</div>
+                        <div class="player-details">£5.5m · LEE</div>
+                        <div class="player-fixture away">(A)</div>
+                    </div>
+                    
+                    <div class="player-card selected" data-position="mid" data-id="7">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Palmer</div>
+                        <div class="player-details">£7.5m · CRY</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                    
+                    <div class="player-card selected" data-position="mid" data-id="8">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">M.Salah</div>
+                        <div class="player-details">£12.5m · BOU</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                    
+                    <div class="player-card selected" data-position="mid" data-id="9">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Wirtz</div>
+                        <div class="player-details">£8.0m · BOU</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                </div>
+                
+                <!-- Forwards -->
+                <div class="position-label">Forwards</div>
+                <div class="position-row">
+                    <div class="player-card selected" data-position="fwd" data-id="10">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Piroe</div>
+                        <div class="player-details">£6.5m · EVE</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                    
+                    <div class="player-card selected" data-position="fwd" data-id="11">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Watkins</div>
+                        <div class="player-details">£8.5m · NEW</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                </div>
+                
+                <!-- Bench -->
+                <div class="position-label">Bench</div>
+                <div class="bench">
+                    <div class="player-card" data-position="gkp" data-id="12">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Darlow</div>
+                        <div class="player-details">£4.0m · EVE</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                    
+                    <div class="player-card" data-position="def" data-id="13">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Estève</div>
+                        <div class="player-details">£4.0m · TOT</div>
+                        <div class="player-fixture away">(A)</div>
+                    </div>
+                    
+                    <div class="player-card" data-position="def" data-id="14">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">J.Arlas</div>
+                        <div class="player-details">£4.0m · MCI</div>
+                        <div class="player-fixture home">(H)</div>
+                    </div>
+                    
+                    <div class="player-card" data-position="mid" data-id="15">
+                        <div class="player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-name">Kroupi.Jr</div>
+                        <div class="player-details">£4.5m · LIV</div>
+                        <div class="player-fixture away">(A)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="player-list">
+                <div class="player-list-header">
+                    <h2>Player Pool</h2>
+                    <div class="budget">Remaining: £1.0m</div>
+                </div>
+                
+                <div class="position-filters">
+                    <div class="position-filter active" data-position="all">All</div>
+                    <div class="position-filter" data-position="gkp">GKP</div>
+                    <div class="position-filter" data-position="def">DEF</div>
+                    <div class="position-filter" data-position="mid">MID</div>
+                    <div class="position-filter" data-position="fwd">FWD</div>
+                </div>
+                
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search players..." id="player-search">
+                </div>
+                
+                <div class="players-grid" id="player-pool">
+                    <!-- Players will be populated by JavaScript -->
+                </div>
+                
+                <div class="actions">
+                    <div class="action-btn">Save Team</div>
+                    <div class="action-btn">Auto Pick</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Player data - in a real app this would come from a database
+        const players = [
+            // Goalkeepers
+            { id: 1, name: "Kelleher", position: "gkp", club: "NFO", price: 4.5, fixture: "A", selected: true },
+            { id: 12, name: "Darlow", position: "gkp", club: "EVE", price: 4.0, fixture: "H", selected: true, bench: true },
+            { id: 16, name: "Alisson", position: "gkp", club: "LIV", price: 5.5, fixture: "H" },
+            { id: 17, name: "Ederson", position: "gkp", club: "MCI", price: 5.5, fixture: "A" },
+            
+            // Defenders
+            { id: 2, name: "Colwill", position: "def", club: "CRY", price: 5.0, fixture: "H", selected: true },
+            { id: 3, name: "Gvardiol", position: "def", club: "WOL", price: 5.5, fixture: "A", selected: true },
+            { id: 4, name: "Frimpong", position: "def", club: "BOU", price: 6.0, fixture: "H", selected: true },
+            { id: 5, name: "Wan-Bissaka", position: "def", club: "SUN", price: 4.5, fixture: "A", selected: true },
+            { id: 13, name: "Estève", position: "def", club: "TOT", price: 4.0, fixture: "A", selected: true, bench: true },
+            { id: 14, name: "J.Arlas", position: "def", club: "MCI", price: 4.0, fixture: "H", selected: true, bench: true },
+            { id: 18, name: "Alexander-Arnold", position: "def", club: "LIV", price: 8.0, fixture: "H" },
+            { id: 19, name: "Van Dijk", position: "def", club: "LIV", price: 6.5, fixture: "H" },
+            { id: 20, name: "Saliba", position: "def", club: "ARS", price: 5.5, fixture: "A" },
+            
+            // Midfielders
+            { id: 6, name: "Ndiaye", position: "mid", club: "LEE", price: 5.5, fixture: "A", selected: true },
+            { id: 7, name: "Palmer", position: "mid", club: "CRY", price: 7.5, fixture: "H", selected: true },
+            { id: 8, name: "M.Salah", position: "mid", club: "BOU", price: 12.5, fixture: "H", selected: true },
+            { id: 9, name: "Wirtz", position: "mid", club: "BOU", price: 8.0, fixture: "H", selected: true },
+            { id: 15, name: "Kroupi.Jr", position: "mid", club: "LIV", price: 4.5, fixture: "A", selected: true, bench: true },
+            { id: 21, name: "De Bruyne", position: "mid", club: "MCI", price: 10.5, fixture: "A" },
+            { id: 22, name: "Saka", position: "mid", club: "ARS", price: 9.0, fixture: "A" },
+            { id: 23, name: "Foden", position: "mid", club: "MCI", price: 8.5, fixture: "A" },
+            { id: 24, name: "Odegaard", position: "mid", club: "ARS", price: 8.5, fixture: "A" },
+            
+            // Forwards
+            { id: 10, name: "Piroe", position: "fwd", club: "EVE", price: 6.5, fixture: "H", selected: true },
+            { id: 11, name: "Watkins", position: "fwd", club: "NEW", price: 8.5, fixture: "H", selected: true },
+            { id: 25, name: "Haaland", position: "fwd", club: "MCI", price: 14.0, fixture: "A" },
+            { id: 26, name: "Kane", position: "fwd", club: "BAY", price: 11.0, fixture: "H" },
+            { id: 27, name: "Son", position: "fwd", club: "TOT", price: 9.5, fixture: "A" },
+            { id: 28, name: "Nkunku", position: "fwd", club: "CHE", price: 7.5, fixture: "H" },
+        ];
+
+        // Initialize the team picker
+        function initTeamPicker() {
+            renderPlayerPool();
+            setupEventListeners();
+            updateBudget();
+        }
+
+        // Render the player pool
+        function renderPlayerPool(filter = "all") {
+            const playerPool = document.getElementById("player-pool");
+            playerPool.innerHTML = "";
+            
+            players.filter(player => {
+                if (filter === "all") return true;
+                return player.position === filter;
+            }).forEach(player => {
+                if (!player.selected) {
+                    const playerCard = document.createElement("div");
+                    playerCard.className = "list-player-card";
+                    playerCard.dataset.id = player.id;
+                    playerCard.dataset.position = player.position;
+                    playerCard.innerHTML = `
+                        <div class="list-player-image">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="list-player-name">${player.name}</div>
+                        <div class="list-player-details">£${player.price}m · ${player.club}</div>
+                        <div class="list-player-fixture ${player.fixture === "H" ? "home" : "away"}">(${player.fixture})</div>
+                    `;
+                    playerPool.appendChild(playerCard);
+                }
+            });
+        }
+
+        // Update the budget display
+        function updateBudget() {
+            const selectedPlayers = players.filter(p => p.selected);
+            const totalCost = selectedPlayers.reduce((sum, player) => sum + player.price, 0);
+            const remaining = (100 - totalCost).toFixed(1);
+            
+            document.querySelector(".budget").textContent = `Remaining: £${remaining}m`;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Position filters
+            document.querySelectorAll(".position-filter").forEach(filter => {
+                filter.addEventListener("click", () => {
+                    document.querySelectorAll(".position-filter").forEach(f => f.classList.remove("active"));
+                    filter.classList.add("active");
+                    renderPlayerPool(filter.dataset.position);
+                });
+            });
+            
+            // Player search
+            document.getElementById("player-search").addEventListener("input", (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const playerCards = document.querySelectorAll(".list-player-card");
+                
+                playerCards.forEach(card => {
+                    const playerName = card.querySelector(".list-player-name").textContent.toLowerCase();
+                    if (playerName.includes(searchTerm)) {
+                        card.style.display = "block";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+            
+            // Player selection from pool
+            document.getElementById("player-pool").addEventListener("click", (e) => {
+                const playerCard = e.target.closest(".list-player-card");
+                if (playerCard) {
+                    const playerId = parseInt(playerCard.dataset.id);
+                    const player = players.find(p => p.id === playerId);
+                    
+                    if (player) {
+                        // Add player to team
+                        addPlayerToTeam(player);
+                    }
+                }
+            });
+            
+            // Team player clicks (for substitution)
+            document.querySelectorAll(".player-card").forEach(card => {
+                card.addEventListener("click", (e) => {
+                    const playerCard = e.target.closest(".player-card");
+                    if (playerCard) {
+                        const playerId = parseInt(playerCard.dataset.id);
+                        const player = players.find(p => p.id === playerId);
+                        
+                        if (player && !player.bench) {
+                            // Move player to bench or remove
+                            movePlayerToBench(player);
+                        } else if (player && player.bench) {
+                            // Move player from bench to team
+                            movePlayerFromBench(player);
+                        }
+                    }
+                });
+            });
+            
+            // Chip activation
+            document.querySelectorAll(".chip:not(.unavailable)").forEach(chip => {
+                chip.addEventListener("click", () => {
+                    if (chip.classList.contains("active")) {
+                        chip.classList.remove("active");
+                    } else {
+                        chip.classList.add("active");
+                    }
+                });
+            });
+            
+            // Save team button
+            document.querySelector(".action-btn").addEventListener("click", () => {
+                alert("Team saved successfully!");
+            });
+            
+            // Auto pick button
+            document.querySelectorAll(".action-btn")[1].addEventListener("click", () => {
+                autoPickTeam();
+            });
+        }
+
+        // Add player to team
+        function addPlayerToTeam(player) {
+            // Find the position slot
+            const positionSlots = document.querySelectorAll(`.player-card[data-position="${player.position}"]`);
+            
+            for (const slot of positionSlots) {
+                if (!slot.classList.contains("selected")) {
+                    // Get the current player in this slot
+                    const currentPlayerId = parseInt(slot.dataset.id);
+                    const currentPlayer = players.find(p => p.id === currentPlayerId);
+                    
+                    if (currentPlayer) {
+                        // Move current player to bench
+                        currentPlayer.selected = true;
+                        currentPlayer.bench = true;
+                        slot.classList.remove("selected");
+                    }
+                    
+                    // Add new player to slot
+                    slot.dataset.id = player.id;
+                    slot.querySelector(".player-name").textContent = player.name;
+                    slot.querySelector(".player-details").textContent = `£${player.price}m · ${player.club}`;
+                    slot.querySelector(".player-fixture").textContent = `(${player.fixture})`;
+                    slot.querySelector(".player-fixture").className = `player-fixture ${player.fixture === "H" ? "home" : "away"}`;
+                    slot.classList.add("selected");
+                    
+                    // Update player status
+                    player.selected = true;
+                    player.bench = false;
+                    
+                    // Update player pool
+                    renderPlayerPool(document.querySelector(".position-filter.active").dataset.position);
+                    updateBudget();
+                    return;
+                }
+            }
+            
+            alert(`No available slot for ${player.position.toUpperCase()} position!`);
+        }
+
+        // Move player to bench
+        function movePlayerToBench(player) {
+            // Find an empty bench slot
+            const benchSlots = document.querySelectorAll(".bench .player-card");
+            
+            for (const slot of benchSlots) {
+                if (!slot.classList.contains("selected")) {
+                    // Move player to bench
+                    slot.dataset.id = player.id;
+                    slot.querySelector(".player-name").textContent = player.name;
+                    slot.querySelector(".player-details").textContent = `£${player.price}m · ${player.club}`;
+                    slot.querySelector(".player-fixture").textContent = `(${player.fixture})`;
+                    slot.querySelector(".player-fixture").className = `player-fixture ${player.fixture === "H" ? "home" : "away"}`;
+                    slot.classList.add("selected");
+                    
+                    // Update player status
+                    player.bench = true;
+                    
+                    // Remove from team position
+                    const positionSlot = document.querySelector(`.player-card[data-id="${player.id}"]:not(.bench)`);
+                    if (positionSlot) {
+                        positionSlot.classList.remove("selected");
+                        positionSlot.dataset.id = "";
+                        positionSlot.querySelector(".player-name").textContent = "Empty";
+                        positionSlot.querySelector(".player-details").textContent = "Select player";
+                        positionSlot.querySelector(".player-fixture").textContent = "";
+                    }
+                    
+                    updateBudget();
+                    return;
+                }
+            }
+            
+            alert("No available bench slot!");
+        }
+
+        // Move player from bench to team
+        function movePlayerFromBench(player) {
+            // Find an empty position slot
+            const positionSlots = document.querySelectorAll(`.player-card[data-position="${player.position}"]:not(.bench)`);
+            
+            for (const slot of positionSlots) {
+                if (!slot.classList.contains("selected")) {
+                    // Move player to position
+                    slot.dataset.id = player.id;
+                    slot.querySelector(".player-name").textContent = player.name;
+                    slot.querySelector(".player-details").textContent = `£${player.price}m · ${player.club}`;
+                    slot.querySelector(".player-fixture").textContent = `(${player.fixture})`;
+                    slot.querySelector(".player-fixture").className = `player-fixture ${player.fixture === "H" ? "home" : "away"}`;
+                    slot.classList.add("selected");
+                    
+                    // Update player status
+                    player.bench = false;
+                    
+                    // Remove from bench
+                    const benchSlot = document.querySelector(`.bench .player-card[data-id="${player.id}"]`);
+                    if (benchSlot) {
+                        benchSlot.classList.remove("selected");
+                        benchSlot.dataset.id = "";
+                        benchSlot.querySelector(".player-name").textContent = "Empty";
+                        benchSlot.querySelector(".player-details").textContent = "Select player";
+                        benchSlot.querySelector(".player-fixture").textContent = "";
+                    }
+                    
+                    updateBudget();
+                    return;
+                }
+            }
+            
+            alert(`No available slot for ${player.position.toUpperCase()} position!`);
+        }
+
+        // Auto pick team
+        function autoPickTeam() {
+            // Reset all players
+            players.forEach(player => {
+                player.selected = false;
+                player.bench = false;
+            });
+            
+            // Reset team display
+            document.querySelectorAll(".player-card").forEach(card => {
+                card.classList.remove("selected");
+                card.dataset.id = "";
+                card.querySelector(".player-name").textContent = "Empty";
+                card.querySelector(".player-details").textContent = "Select player";
+                card.querySelector(".player-fixture").textContent = "";
+            });
+            
+            // Auto pick starting 11
+            const positions = {
+                gkp: players.filter(p => p.position === "gkp").sort((a, b) => b.price - a.price)[0],
+                def: players.filter(p => p.position === "def").sort((a, b) => b.price - a.price).slice(0, 4),
+                mid: players.filter(p => p.position === "mid").sort((a, b) => b.price - a.price).slice(0, 4),
+                fwd: players.filter(p => p.position === "fwd").sort((a, b) => b.price - a.price).slice(0, 2)
+            };
+            
+            // Auto pick bench
+            const bench = [
+                players.filter(p => p.position === "gkp").sort((a, b) => a.price - b.price)[0],
+                ...players.filter(p => p.position === "def").sort((a, b) => a.price - b.price).slice(0, 2),
+                players.filter(p => p.position === "mid").sort((a, b) => a.price - b.price)[0]
+            ];
+            
+            // Update players
+            positions.gkp.selected = true;
+            positions.def.forEach(p => p.selected = true);
+            positions.mid.forEach(p => p.selected = true);
+            positions.fwd.forEach(p => p.selected = true);
+            bench.forEach(p => {
+                p.selected = true;
+                p.bench = true;
+            });
+            
+            // Render the team
+            renderTeam();
+            renderPlayerPool();
+            updateBudget();
+        }
+
+        // Render the team based on player data
+        function renderTeam() {
+            // Goalkeeper
+            const gkp = players.find(p => p.position === "gkp" && p.selected && !p.bench);
+            if (gkp) {
+                const slot = document.querySelector(`.player-card[data-position="gkp"]:not(.bench)`);
+                slot.dataset.id = gkp.id;
+                slot.querySelector(".player-name").textContent = gkp.name;
+                slot.querySelector(".player-details").textContent = `£${gkp.price}m · ${gkp.club}`;
+                slot.querySelector(".player-fixture").textContent = `(${gkp.fixture})`;
+                slot.querySelector(".player-fixture").className = `player-fixture ${gkp.fixture === "H" ? "home" : "away"}`;
+                slot.classList.add("selected");
+            }
+            
+            // Defenders
+            const defs = players.filter(p => p.position === "def" && p.selected && !p.bench);
+            document.querySelectorAll(`.player-card[data-position="def"]:not(.bench)`).forEach((slot, index) => {
+                if (defs[index]) {
+                    const player = defs[index];
+                    slot.dataset.id = player.id;
+                    slot.querySelector(".player-name").textContent = player.name;
+                    slot.querySelector(".player-details").textContent = `£${player.price}m · ${player.club}`;
+                    slot.querySelector(".player-fixture").textContent = `(${player.fixture})`;
+                    slot.querySelector(".player-fixture").className = `player-fixture ${player.fixture === "H" ? "home" : "away"}`;
+                    slot.classList.add("selected");
+                }
+            });
+            
+            // Midfielders
+            const mids = players.filter(p => p.position === "mid" && p.selected && !p.bench);
+            document.querySelectorAll(`.player-card[data-position="mid"]:not(.bench)`).forEach((slot, index) => {
+                if (mids[index]) {
+                    const player = mids[index];
+                    slot.dataset.id = player.id;
+                    slot.querySelector(".player-name").textContent = player.name;
+                    slot.querySelector(".player-details").textContent = `£${player.price}m · ${player.club}`;
+                    slot.querySelector(".player-fixture").textContent = `(${player.fixture})`;
+                    slot.querySelector(".player-fixture").className = `player-fixture ${player.fixture === "H" ? "home" : "away"}`;
+                    slot.classList.add("selected");
+                }
+            });
+            
+            // Forwards
+            const fwds = players.filter(p => p.position === "fwd" && p.selected && !p.bench);
+            document.querySelectorAll(`.player-card[data-position="fwd"]:not(.bench)`).forEach((slot, index) => {
+                if (fwds[index]) {
+                    const player = fwds[index];
+                    slot.dataset.id = player.id;
+                    slot.querySelector(".player-name").textContent = player.name;
+                    slot.querySelector(".player-details").textContent = `£${player.price}m · ${player.club}`;
+                    slot.querySelector(".player-fixture").textContent = `(${player.fixture})`;
+                    slot.querySelector(".player-fixture").className = `player-fixture ${player.fixture === "H" ? "home" : "away"}`;
+                    slot.classList.add("selected");
+                }
+            });
+            
+            // Bench
+            const benchPlayers = players.filter(p => p.selected && p.bench);
+            document.querySelectorAll(`.bench .player-card`).forEach((slot, index) => {
+                if (benchPlayers[index]) {
+                    const player = benchPlayers[index];
+                    slot.dataset.id = player.id;
+                    slot.dataset.position = player.position;
+                    slot.querySelector(".player-name").textContent = player.name;
+                    slot.querySelector(".player-details").textContent = `£${player.price}m · ${player.club}`;
+                    slot.querySelector(".player-fixture").textContent = `(${player.fixture})`;
+                    slot.querySelector(".player-fixture").className = `player-fixture ${player.fixture === "H" ? "home" : "away"}`;
+                    slot.classList.add("selected");
+                }
+            });
+        }
+
+        // Initialize when the page loads
+        document.addEventListener("DOMContentLoaded", initTeamPicker);
+    </script>
+</body>
+</html>

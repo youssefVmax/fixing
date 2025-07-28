@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Chat Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #d13024 0%, #ffffff 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        .dashboard-layout {
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .chat-container {
+            height: calc(100vh - 3rem);
+            display: flex;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            background: linear-gradient(180deg, #2d1b69 0%, #11047a 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(45deg, #ffd89b 0%, #19547b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.125rem;
+            height: 1.125rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ffd89b;
+            box-shadow: 0 0 0 3px rgba(255, 216, 155, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Conversations */
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .conversation-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .conversation-item.active {
+            background: linear-gradient(135deg, rgba(255, 216, 155, 0.2) 0%, rgba(25, 84, 123, 0.2) 100%);
+            border-color: #ffd89b;
+            box-shadow: 0 5px 20px rgba(255, 216, 155, 0.3);
+        }
+
+        .avatar {
+            position: relative;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 1.125rem;
+            height: 1.125rem;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            animation: pulse-online 2s infinite;
+        }
+
+        @keyframes pulse-online {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .conversation-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .conversation-preview {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .conversation-message {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .unread-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            min-width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+            animation: bounce-badge 2s infinite;
+        }
+
+        @keyframes bounce-badge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .conversation-role {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Main Chat Area */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .chat-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-header-avatar {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .chat-header-details h3 {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-header-details p {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .chat-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn i {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+
+        /* Messages */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .messages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            display: flex;
+            animation: messageSlideIn 0.4s ease-out;
+        }
+
+        .message.own {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 28rem;
+        }
+
+        .message.own .message-content {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .message-bubble {
+            padding: 1rem 1.25rem;
+            border-radius: 1.25rem;
+            font-size: 0.875rem;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .message-bubble:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .message-bubble.own {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message-bubble.other {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #111827;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message.own .message-time {
+            justify-content: flex-end;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .read-receipt {
+            width: 1rem;
+            height: 1rem;
+            color: #10b981;
+        }
+
+        .message-reactions {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .reaction {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .reaction:hover {
+            background: #f3f4f6;
+            transform: scale(1.05);
+        }
+
+        .reaction.active {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            border-color: #ffd89b;
+        }
+
+        /* Message Input */
+        .message-input-container {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .message-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 0.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .input-btn {
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .input-btn:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            background: transparent;
+            color: #111827;
+        }
+
+        .message-input:focus {
+            outline: none;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #da3333 0%, #fcfcfc 100%);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .send-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #f8fafc 0%, #e5e7eb 100%);
+        }
+
+        .empty-state-content {
+            max-width: 24rem;
+            padding: 2rem;
+        }
+
+        .empty-state-icon {
+            width: 4rem;
+            height: 4rem;
+            color: #9ca3af;
+            margin: 0 auto 1.5rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 1.25rem;
+            margin: 0.5rem 0;
+            animation: fadeIn 0.3s ease-out;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.375rem;
+        }
+
+        .typing-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        /* Voice Message */
+        .voice-message {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .voice-play-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .voice-play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .voice-waveform {
+            flex: 1;
+            height: 2rem;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .voice-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd89b 0%, #19547b 100%);
+            border-radius: 1rem;
+            width: 30%;
+            transition: width 0.3s ease;
+        }
+
+        .voice-duration {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            min-width: 3rem;
+        }
+
+        /* File Message */
+        .file-message {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .file-icon {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-size {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        /* Animations */
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                padding: 0.5rem;
+            }
+            
+            .sidebar {
+                width: 300px;
+            }
+            
+            .message-content {
+                max-width: 20rem;
+            }
+            
+            .chat-container {
+                height: calc(100vh - 1rem);
+            }
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none;
+        }
+
+        /* Pulse animation for new messages */
+        .pulse {
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Scrollbar styling */
+        .conversations-list::-webkit-scrollbar,
+        .messages-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .conversations-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .conversations-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <button class="theme-toggle" id="themeToggle">
+            <i data-lucide="moon"></i>
+        </button>
+        
+        <div class="chat-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Header -->
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <h2>Messages</h2>
+                        <button class="btn">
+                            <i data-lucide="plus"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Search -->
+                    <div class="search-container">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search conversations..." 
+                            class="search-input"
+                        >
+                    </div>
+                </div>
+
+                <!-- Conversations List -->
+                <div class="conversations-list" id="conversationsList">
+                    <!-- Conversations will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="chat-main">
+                <!-- Chat Header -->
+                <div class="chat-header" id="chatHeader">
+                    <!-- Header content will be dynamically inserted -->
+                </div>
+
+                <!-- Messages -->
+                <div class="messages-container" id="messagesContainer">
+                    <div class="messages-list" id="messagesList">
+                        <!-- Messages will be dynamically inserted here -->
+                    </div>
+                    
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator hidden" id="typingIndicator">
+                        <div class="avatar" style="width: 2.5rem; height: 2.5rem;">MJ</div>
+                        <div>
+                            <div class="typing-dots">
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Input -->
+                <div class="message-input-container" id="messageInputContainer">
+                    <div class="message-input-wrapper">
+                        <button class="input-btn" id="attachBtn">
+                            <i data-lucide="paperclip"></i>
+                        </button>
+                        <button class="input-btn" id="voiceBtn">
+                            <i data-lucide="mic"></i>
+                        </button>
+                        <input 
+                            type="text" 
+                            id="messageInput" 
+                            placeholder="Type a message..." 
+                            class="message-input"
+                        >
+                        <button class="input-btn" id="emojiBtn">
+                            <i data-lucide="smile"></i>
+                        </button>
+                        <button class="send-btn" id="sendBtn" disabled>
+                            <i data-lucide="send"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-content">
+                        <i data-lucide="message-square" class="empty-state-icon"></i>
+                        <h3>Select a conversation</h3>
+                        <p>Choose a conversation from the sidebar to start messaging</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            initializeApp();
+        });
+
+        // Application state
+        let selectedChat = 1;
+        let searchTerm = '';
+        let messageText = '';
+        let isTyping = false;
+        let isDarkMode = false;
+
+        // Sample data with enhanced features
+        const conversations = [
+            {
+                id: 1,
+                name: "Mike Johnson",
+                role: "Head Coach",
+                avatar: "/placeholder.svg?height=40&width=40",
+                lastMessage: "Great session today! The team is really improving.",
+                timestamp: "2 min ago",
+                unread: 0,
+                online: true,
+                type: "direct"
+            },
+            {
+                id: 2,
+                name: "Eagles Team Chat",
+                role: "Team Group",
+                avatar: "/placeholder.svg?height=40&width=40",
+                lastMessage: "Don't forget about tomorrow's early training session",
+                timestamp: "15 min ago",
+                unread: 3,
+                online: false,
+                type: "group",
+                members: 25
+            },
+            {
+                id: 3,
+                name: "Sarah Williams",
+                role: "Assistant Coach",
+                avatar: "/placeholder.svg?height=40&width=40",
+                lastMessage: "I've updated the drill library with new exercises",
+                timestamp: "1 hour ago",
+                unread: 1,
+                online: true,
+                type: "direct"
+            },
+            {
+                id: 4,
+                name: "Coaching Staff",
+                role: "Staff Group",
+                avatar: "/placeholder.svg?height=40&width=40",
+                lastMessage: "Meeting scheduled for Friday at 3 PM",
+                timestamp: "2 hours ago",
+                unread: 0,
+                online: false,
+                type: "group",
+                members: 8
+            },
+            {
+                id: 5,
+                name: "David Chen",
+                role: "Sports Therapist",
+                avatar: "/placeholder.svg?height=40&width=40",
+                lastMessage: "Player injury report is ready for review",
+                timestamp: "3 hours ago",
+                unread: 0,
+                online: false,
+                type: "direct"
+            },
+            {
+                id: 6,
+                name: "John Smith",
+                role: "Team Captain",
+                avatar: "/placeholder.svg?height=40&width=40",
+                lastMessage: "Thanks for the feedback on my performance",
+                timestamp: "1 day ago",
+                unread: 0,
+                online: true,
+                type: "direct"
+            }
+        ];
+
+        let messages = [
+            {
+                id: 1,
+                senderId: 1,
+                senderName: "Mike Johnson",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "Hey! How did the training session go today?",
+                timestamp: "10:30 AM",
+                type: "text",
+                isOwn: false,
+                reactions: [
+                    { emoji: "👍", count: 2, active: false },
+                    { emoji: "❤️", count: 1, active: true }
+                ],
+                readReceipt: true
+            },
+            {
+                id: 2,
+                senderId: 0,
+                senderName: "You",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "It went really well! The players were very engaged and we made good progress on the new formations.",
+                timestamp: "10:32 AM",
+                type: "text",
+                isOwn: true,
+                reactions: [
+                    { emoji: "🔥", count: 1, active: false }
+                ],
+                readReceipt: true
+            },
+            {
+                id: 3,
+                senderId: 1,
+                senderName: "Mike Johnson",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "",
+                timestamp: "10:35 AM",
+                type: "voice",
+                isOwn: false,
+                duration: "0:45",
+                readReceipt: true
+            },
+            {
+                id: 4,
+                senderId: 0,
+                senderName: "You",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "",
+                timestamp: "10:37 AM",
+                type: "file",
+                isOwn: true,
+                fileName: "Training_Report.pdf",
+                fileSize: "2.4 MB",
+                readReceipt: true
+            },
+            {
+                id: 5,
+                senderId: 1,
+                senderName: "Mike Johnson",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "Agreed. Let's discuss this further in tomorrow's coaching meeting. I have some ideas for additional drills.",
+                timestamp: "10:40 AM",
+                type: "text",
+                isOwn: false,
+                reactions: [],
+                readReceipt: true
+            },
+            {
+                id: 6,
+                senderId: 0,
+                senderName: "You",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "Perfect! I'll prepare some notes and bring the performance data from today's session.",
+                timestamp: "10:42 AM",
+                type: "text",
+                isOwn: true,
+                reactions: [
+                    { emoji: "👌", count: 1, active: false }
+                ],
+                readReceipt: true
+            },
+            {
+                id: 7,
+                senderId: 1,
+                senderName: "Mike Johnson",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "Great session today! The team is really improving.",
+                timestamp: "Just now",
+                type: "text",
+                isOwn: false,
+                reactions: [],
+                readReceipt: false
+            }
+        ];
+
+        function initializeApp() {
+            setupEventListeners();
+            renderConversations();
+            renderChat();
+        }
+
+        function setupEventListeners() {
+            // Search input
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                searchTerm = e.target.value;
+                renderConversations();
+            });
+
+            // Message input
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            messageInput.addEventListener('input', (e) => {
+                messageText = e.target.value;
+                sendBtn.disabled = !messageText.trim();
+                
+                // Show typing indicator for other users (simulation)
+                if (messageText.trim() && !isTyping) {
+                    showTypingIndicator();
+                } else if (!messageText.trim() && isTyping) {
+                    hideTypingIndicator();
+                }
+            });
+
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
+
+            sendBtn.addEventListener('click', handleSendMessage);
+
+            // Voice button
+            document.getElementById('voiceBtn').addEventListener('click', () => {
+                handleVoiceMessage();
+            });
+
+            // Attach button
+            document.getElementById('attachBtn').addEventListener('click', () => {
+                handleFileAttachment();
+            });
+
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        }
+
+        function filterConversations() {
+            return conversations.filter(conv => 
+                conv.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                conv.role.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('');
+        }
+
+        function renderConversations() {
+            const filteredConversations = filterConversations();
+            const conversationsList = document.getElementById('conversationsList');
+            
+            conversationsList.innerHTML = filteredConversations.map(conv => `
+                <div class="conversation-item ${selectedChat === conv.id ? 'active' : ''}" 
+                     onclick="selectConversation(${conv.id})">
+                    <div class="avatar">
+                        ${conv.type === 'group' ? '<i data-lucide="users"></i>' : getInitials(conv.name)}
+                        ${conv.online && conv.type === 'direct' ? '<div class="online-indicator"></div>' : ''}
+                    </div>
+                    <div class="conversation-content">
+                        <div class="conversation-header">
+                            <div class="conversation-name">${conv.name}</div>
+                            <div class="conversation-time">${conv.timestamp}</div>
+                        </div>
+                        <div class="conversation-preview">
+                            <div class="conversation-message">${conv.lastMessage}</div>
+                            ${conv.unread > 0 ? `<div class="unread-badge">${conv.unread}</div>` : ''}
+                        </div>
+                        <div class="conversation-role">
+                            ${conv.type === 'group' ? `${conv.members} members` : conv.role}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Re-initialize Lucide icons
+            lucide.createIcons();
+        }
+
+        function selectConversation(id) {
+            selectedChat = id;
+            renderConversations();
+            renderChat();
+        }
+
+        function renderChat() {
+            const selectedConversation = conversations.find(conv => conv.id === selectedChat);
+            const chatHeader = document.getElementById('chatHeader');
+            const messagesList = document.getElementById('messagesList');
+            const emptyState = document.getElementById('emptyState');
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageInputContainer = document.getElementById('messageInputContainer');
+
+            if (!selectedConversation) {
+                emptyState.classList.remove('hidden');
+                chatHeader.innerHTML = '';
+                messagesList.innerHTML = '';
+                messagesContainer.classList.add('hidden');
+                messageInputContainer.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            messagesContainer.classList.remove('hidden');
+            messageInputContainer.classList.remove('hidden');
+
+            // Render header
+            chatHeader.innerHTML = `
+                <div class="chat-header-content">
+                    <div class="chat-header-info">
+                        <div class="avatar chat-header-avatar">
+                            ${selectedConversation.type === 'group' ? '<i data-lucide="users"></i>' : getInitials(selectedConversation.name)}
+                        </div>
+                        <div class="chat-header-details">
+                            <h3>${selectedConversation.name}</h3>
+                            <p>${selectedConversation.type === 'group' ? 
+                                `${selectedConversation.members} members` : 
+                                (selectedConversation.online ? 'Online' : 'Offline')}</p>
+                        </div>
+                    </div>
+                    <div class="chat-header-actions">
+                        ${selectedConversation.type === 'direct' ? `
+                            <button class="btn">
+                                <i data-lucide="phone"></i>
+                            </button>
+                            <button class="btn">
+                                <i data-lucide="video"></i>
+                            </button>
+                        ` : ''}
+                        <button class="btn">
+                            <i data-lucide="more-horizontal"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Render messages
+            renderMessages();
+            
+            // Re-initialize Lucide icons
+            lucide.createIcons();
+        }
+
+        function renderMessages() {
+            const messagesList = document.getElementById('messagesList');
+            
+            messagesList.innerHTML = messages.map(msg => {
+                let messageContent = '';
+                
+                if (msg.type === 'text') {
+                    messageContent = `
+                        <div class="message-bubble ${msg.isOwn ? 'own' : 'other'}">
+                            ${msg.content}
+                        </div>
+                    `;
+                } else if (msg.type === 'voice') {
+                    messageContent = `
+                        <div class="message-bubble ${msg.isOwn ? 'own' : 'other'}">
+                            <div class="voice-message">
+                                <button class="voice-play-btn">
+                                    <i data-lucide="play"></i>
+                                </button>
+                                <div class="voice-waveform">
+                                    <div class="voice-progress"></div>
+                                </div>
+                                <span class="voice-duration">${msg.duration}</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (msg.type === 'file') {
+                    messageContent = `
+                        <div class="message-bubble ${msg.isOwn ? 'own' : 'other'}">
+                            <div class="file-message">
+                                <div class="file-icon">
+                                    <i data-lucide="file-text"></i>
+                                </div>
+                                <div class="file-details">
+                                    <div class="file-name">${msg.fileName}</div>
+                                    <div class="file-size">${msg.fileSize}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const reactions = msg.reactions && msg.reactions.length > 0 ? `
+                    <div class="message-reactions">
+                        ${msg.reactions.map(reaction => `
+                            <div class="reaction ${reaction.active ? 'active' : ''}" onclick="toggleReaction(${msg.id}, '${reaction.emoji}')">
+                                ${reaction.emoji} ${reaction.count}
+                            </div>
+                        `).join('')}
+                        <div class="reaction" onclick="addReaction(${msg.id})">+</div>
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="message ${msg.isOwn ? 'own' : ''}">
+                        <div class="message-content">
+                            ${!msg.isOwn ? `
+                                <div class="avatar message-avatar">
+                                    ${getInitials(msg.senderName)}
+                                </div>
+                            ` : ''}
+                            <div>
+                                ${messageContent}
+                                ${reactions}
+                                <div class="message-time">
+                                    ${msg.timestamp}
+                                    ${msg.isOwn && msg.readReceipt ? '<i data-lucide="check-check" class="read-receipt"></i>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Re-initialize Lucide icons
+            lucide.createIcons();
+
+            // Scroll to bottom
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function handleSendMessage() {
+            if (!messageText.trim()) return;
+
+            // Add new message
+            const newMessage = {
+                id: messages.length + 1,
+                senderId: 0,
+                senderName: "You",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: messageText,
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                type: "text",
+                isOwn: true,
+                reactions: [],
+                readReceipt: false
+            };
+
+            messages.push(newMessage);
+            
+            // Clear input
+            const messageInput = document.getElementById('messageInput');
+            messageInput.value = '';
+            messageText = '';
+            document.getElementById('sendBtn').disabled = true;
+
+            // Hide typing indicator
+            hideTypingIndicator();
+
+            // Re-render messages
+            renderMessages();
+
+            // Add pulse animation to the conversation item
+            const activeConversation = document.querySelector('.conversation-item.active');
+            if (activeConversation) {
+                activeConversation.classList.add('pulse');
+                setTimeout(() => {
+                    activeConversation.classList.remove('pulse');
+                }, 600);
+            }
+
+            // Simulate read receipt after 1 second
+            setTimeout(() => {
+                newMessage.readReceipt = true;
+                renderMessages();
+            }, 1000);
+
+            // Simulate response after 3 seconds
+            setTimeout(() => {
+                simulateResponse();
+            }, 3000);
+        }
+
+        function handleVoiceMessage() {
+            const newMessage = {
+                id: messages.length + 1,
+                senderId: 0,
+                senderName: "You",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "",
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                type: "voice",
+                isOwn: true,
+                duration: "0:15",
+                reactions: [],
+                readReceipt: false
+            };
+
+            messages.push(newMessage);
+            renderMessages();
+
+            // Simulate read receipt
+            setTimeout(() => {
+                newMessage.readReceipt = true;
+                renderMessages();
+            }, 1000);
+        }
+
+        function handleFileAttachment() {
+            const fileTypes = [
+                { name: "Project_Plan.pdf", size: "1.2 MB" },
+                { name: "Team_Stats.xlsx", size: "856 KB" },
+                { name: "Training_Video.mp4", size: "15.3 MB" }
+            ];
+            
+            const randomFile = fileTypes[Math.floor(Math.random() * fileTypes.length)];
+            
+            const newMessage = {
+                id: messages.length + 1,
+                senderId: 0,
+                senderName: "You",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: "",
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                type: "file",
+                isOwn: true,
+                fileName: randomFile.name,
+                fileSize: randomFile.size,
+                reactions: [],
+                readReceipt: false
+            };
+
+            messages.push(newMessage);
+            renderMessages();
+
+            // Simulate read receipt
+            setTimeout(() => {
+                newMessage.readReceipt = true;
+                renderMessages();
+            }, 1000);
+        }
+
+        function simulateResponse() {
+            const responses = [
+                "That sounds fantastic!",
+                "I completely agree with your approach.",
+                "Let's schedule a meeting to discuss this further.",
+                "Excellent work! Keep it up.",
+                "Thanks for the detailed update!",
+                "This is exactly what we needed."
+            ];
+
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            const responseMessage = {
+                id: messages.length + 1,
+                senderId: selectedChat,
+                senderName: conversations.find(c => c.id === selectedChat)?.name || "User",
+                senderAvatar: "/placeholder.svg?height=32&width=32",
+                content: randomResponse,
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                type: "text",
+                isOwn: false,
+                reactions: [],
+                readReceipt: true
+            };
+
+            messages.push(responseMessage);
+            renderMessages();
+        }
+
+        function showTypingIndicator() {
+            isTyping = true;
+            const typingIndicator = document.getElementById('typingIndicator');
+            typingIndicator.classList.remove('hidden');
+            
+            // Scroll to bottom
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            isTyping = false;
+            const typingIndicator = document.getElementById('typingIndicator');
+            typingIndicator.classList.add('hidden');
+        }
+
+        function toggleReaction(messageId, emoji) {
+            const message = messages.find(m => m.id === messageId);
+            if (message && message.reactions) {
+                const reaction = message.reactions.find(r => r.emoji === emoji);
+                if (reaction) {
+                    if (reaction.active) {
+                        reaction.count--;
+                        reaction.active = false;
+                        if (reaction.count === 0) {
+                            message.reactions = message.reactions.filter(r => r.emoji !== emoji);
+                        }
+                    } else {
+                        reaction.count++;
+                        reaction.active = true;
+                    }
+                } else {
+                    message.reactions.push({ emoji, count: 1, active: true });
+                }
+                renderMessages();
+            }
+        }
+
+        function addReaction(messageId) {
+            const emojis = ['👍', '❤️', '😂', '😮', '😢', '🔥', '👌', '🎉'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            toggleReaction(messageId, randomEmoji);
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (isDarkMode) {
+                body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
+                themeToggle.innerHTML = '<i data-lucide="sun"></i>';
+            } else {
+                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                themeToggle.innerHTML = '<i data-lucide="moon"></i>';
+            }
+            
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
+

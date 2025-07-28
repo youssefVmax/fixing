@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Ahly Players Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --primary-dark: #b91c1c;
+            --primary-darker: #991b1b;
+            --secondary: #1f2937;
+            --light: #f8fafc;
+            --gray: #e2e8f0;
+            --dark-gray: #6b7280;
+            --dark: #1f2937;
+            --gold: #eab308;
+            --silver: #9ca3af;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark), var(--primary-darker));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
+        }
+
+        .header p {
+            color: var(--dark-gray);
+            margin-top: 0.25rem;
+            font-size: 1.1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e5e7eb;
+            color: var(--secondary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-outline:hover {
+            background: white;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+        }
+
+        /* Team Header */
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 2.5rem;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.2);
+        }
+
+        .team-info h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .team-sport {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .team-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+        }
+
+        /* Player Card Styles */
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .player-card {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .player-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark), var(--primary-darker));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .player-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .player-image-container {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-image-icon {
+            font-size: 4rem;
+            color: #cbd5e1;
+        }
+
+        .player-number {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-content {
+            padding: 1.5rem;
+        }
+
+        .player-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .player-position {
+            display: inline-block;
+            background: #e5e7eb;
+            color: #4b5563;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .player-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .player-detail {
+            display: flex;
+            align-items: center;
+        }
+
+        .player-detail-icon {
+            margin-right: 0.5rem;
+            color: var(--primary);
+            width: 16px;
+            height: 16px;
+        }
+
+        .player-detail-label {
+            color: var(--dark-gray);
+            margin-right: 0.25rem;
+        }
+
+        .player-detail-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Filters */
+        .filter-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #9ca3af;
+            transition: color 0.3s ease;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+            background: white;
+        }
+
+        .position-filter {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .position-filter select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .position-filter select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+            background: white;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card-animate {
+            animation: cardEntrance 0.6s ease-out;
+        }
+
+        /* Stats Section */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+        }
+
+        .stat-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-name {
+            color: var(--dark-gray);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .team-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .team-stats {
+                justify-content: center;
+            }
+            
+            .player-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .filter-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <h1>Al Ahly Players</h1>
+                    <p>Manage players and track their performance</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i>
+                        Back to Teams
+                    </button>
+                    <button class="btn btn-primary" onclick="showAddPlayerModal()">
+                        <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>
+                        Add Player
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Header -->
+        <div class="team-header">
+            <div class="team-avatar">FT</div>
+            <div class="team-info">
+                <h2>First Team</h2>
+                <span class="team-sport">Football</span>
+                <div class="team-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">25</div>
+                        <div class="stat-label">Players</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">Rank</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">18</div>
+                        <div class="stat-label">Wins</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3><i class="fas fa-chart-line"></i> Team Statistics</h3>
+                <div class="stat-item">
+                    <span class="stat-name">Goals Scored</span>
+                    <span class="stat-value">42</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-name">Goals Conceded</span>
+                    <span class="stat-value">12</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-name">Clean Sheets</span>
+                    <span class="stat-value">10</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-name">Avg. Possession</span>
+                    <span class="stat-value">62%</span>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-star"></i> Top Performers</h3>
+                <div class="stat-item">
+                    <span class="stat-name">Top Scorer</span>
+                    <span class="stat-value">Mohamed Sherif (12 goals)</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-name">Most Assists</span>
+                    <span class="stat-value">Percy Tau (8 assists)</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-name">Player of the Month</span>
+                    <span class="stat-value">Aliou Dieng</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Filters -->
+        <div class="filter-section">
+            <div class="filter-container">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search players by name or position..." id="playerSearch">
+                </div>
+                <div class="position-filter">
+                    <select id="positionFilter">
+                        <option value="">All Positions</option>
+                        <option value="Goalkeeper">Goalkeeper</option>
+                        <option value="Defender">Defender</option>
+                        <option value="Midfielder">Midfielder</option>
+                        <option value="Forward">Forward</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Players Grid -->
+        <div class="player-grid" id="playersGrid">
+            <!-- Player cards will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        // Player data
+        const players = [
+            { id: 1, name: "Mohamed El Shenawy", position: "Goalkeeper", number: 1, age: 34, nationality: "Egyptian", team: "First Team" },
+            { id: 2, name: "Ali Maaloul", position: "Defender", number: 21, age: 33, nationality: "Tunisian", team: "First Team" },
+            { id: 3, name: "Rami Rabia", position: "Defender", number: 4, age: 30, nationality: "Egyptian", team: "First Team" },
+            { id: 4, name: "Mohamed Hany", position: "Defender", number: 24, age: 28, nationality: "Egyptian", team: "First Team" },
+            { id: 5, name: "Aliou Dieng", position: "Midfielder", number: 15, age: 29, nationality: "Malian", team: "First Team" },
+            { id: 6, name: "Hamdy Fathy", position: "Midfielder", number: 8, age: 28, nationality: "Egyptian", team: "First Team" },
+            { id: 7, name: "Hussein El Shahat", position: "Midfielder", number: 14, age: 31, nationality: "Egyptian", team: "First Team" },
+            { id: 8, name: "Percy Tau", position: "Forward", number: 10, age: 29, nationality: "South African", team: "First Team" },
+            { id: 9, name: "Mahmoud Kahraba", position: "Forward", number: 7, age: 29, nationality: "Egyptian", team: "First Team" },
+            { id: 10, name: "Mohamed Sherif", position: "Forward", number: 19, age: 27, nationality: "Egyptian", team: "First Team" },
+            { id: 11, name: "Karim Fouad", position: "Midfielder", number: 6, age: 28, nationality: "Egyptian", team: "First Team" },
+            { id: 12, name: "Ahmed Abdelkader", position: "Defender", number: 13, age: 26, nationality: "Egyptian", team: "First Team" },
+        ];
+
+        // Function to render players
+        function renderPlayers() {
+            const playersGrid = document.getElementById('playersGrid');
+            playersGrid.innerHTML = '';
+            
+            players.forEach((player, index) => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card card-animate';
+                playerCard.style.animationDelay = `${index * 0.05}s`;
+                
+                playerCard.innerHTML = `
+                    <div class="player-image-container">
+                        <div class="player-image-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="player-number">${player.number}</div>
+                    </div>
+                    <div class="player-content">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-position">${player.position}</div>
+                        <div class="player-details">
+                            <div class="player-detail">
+                                <i class="fas fa-flag player-detail-icon"></i>
+                                <div>
+                                    <span class="player-detail-value">${player.nationality}</span>
+                                </div>
+                            </div>
+                            <div class="player-detail">
+                                <i class="fas fa-birthday-cake player-detail-icon"></i>
+                                <div>
+                                    <span class="player-detail-value">${player.age} years</span>
+                                </div>
+                            </div>
+                            <div class="player-detail">
+                                <i class="fas fa-users player-detail-icon"></i>
+                                <div>
+                                    <span class="player-detail-label">Team:</span>
+                                    <span class="player-detail-value">${player.team}</span>
+                                </div>
+                            </div>
+                            <div class="player-detail">
+                                <i class="fas fa-futbol player-detail-icon"></i>
+                                <div>
+                                    <span class="player-detail-label">Sport:</span>
+                                    <span class="player-detail-value">Football</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                playersGrid.appendChild(playerCard);
+            });
+        }
+
+        // Show add player modal
+        function showAddPlayerModal() {
+            alert("Add Player functionality would open a modal in a real application");
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPlayers();
+            
+            // Setup search functionality
+            document.getElementById('playerSearch').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const positionFilter = document.getElementById('positionFilter').value;
+                
+                // Filter players based on search and position
+                // In a real app, this would filter the player list
+            });
+            
+            // Setup position filter
+            document.getElementById('positionFilter').addEventListener('change', function() {
+                const position = this.value;
+                const searchTerm = document.getElementById('playerSearch').value.toLowerCase();
+                
+                // Filter players based on search and position
+                // In a real app, this would filter the player list
+            });
+        });
+    </script>
+</body>
+</html>

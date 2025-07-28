@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance - Al Ahly SC Training Management</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/players.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .space-y-6 > * + * {
+            margin-top: 1.5rem;
+        }
+
+        .space-y-4 > * + * {
+            margin-top: 1rem;
+        }
+
+        .space-x-3 > * + * {
+            margin-left: 0.75rem;
+        }
+
+        .space-x-4 > * + * {
+            margin-left: 1rem;
+        }
+
+        .space-x-6 > * + * {
+            margin-left: 1.5rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+
+        .btn-outline:hover {
+            background: #f9fafb;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #2563eb, #7c3aed);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #1d4ed8, #6d28d9);
+        }
+
+        .btn-default {
+            background: #374151;
+            color: white;
+        }
+
+        .btn-destructive {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 0;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 768px) {
+            .grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        /* Stats */
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+        }
+
+        .stat-icon.green {
+            background: #dcfce7;
+        }
+
+        .stat-icon.red {
+            background: #fee2e2;
+        }
+
+        .stat-icon.yellow {
+            background: #fef3c7;
+        }
+
+        .stat-icon.blue {
+            background: #dbeafe;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Tabs */
+        .tabs {
+            width: 100%;
+        }
+
+        .tabs-list {
+            display: flex;
+            background: #f3f4f6;
+            border-radius: 0.375rem;
+            padding: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tabs-trigger {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+
+        .tabs-trigger.active {
+            background: white;
+            color: #111827;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs-content {
+            display: none;
+        }
+
+        .tabs-content.active {
+            display: block;
+        }
+
+        /* Search */
+        .search-container {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1rem;
+            height: 1rem;
+            color: #9ca3af;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Player List */
+        .player-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .player-details h3 {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .player-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .player-notes {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .player-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Icons */
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .text-green-500 {
+            color: #10b981;
+        }
+
+        .text-red-500 {
+            color: #ef4444;
+        }
+
+        .text-yellow-500 {
+            color: #f59e0b;
+        }
+
+        .text-blue-600 {
+            color: #2563eb;
+        }
+
+        .text-green-600 {
+            color: #059669;
+        }
+
+        .text-red-600 {
+            color: #dc2626;
+        }
+
+        .text-yellow-600 {
+            color: #d97706;
+        }
+
+        /* History table */
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+        }
+
+        .history-stats {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .history-stat {
+            text-align: center;
+        }
+
+        .history-stat p:first-child {
+            font-weight: 500;
+        }
+
+        .history-stat p:last-child {
+            color: #6b7280;
+        }
+
+        .attendance-rate {
+            font-weight: bold;
+            font-size: 1.125rem;
+        }
+
+        .rate-excellent {
+            color: #059669;
+        }
+
+        .rate-good {
+            color: #d97706;
+        }
+
+        .rate-poor {
+            color: #dc2626;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .player-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .player-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .status-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="alahly_logo.png" alt="Al Ahly SC" class="sidebar-logo">
+                <div class="sidebar-title">
+                    <h3>Al Ahly SC</h3>
+                    <p>Attendance Portal</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h4>OVERVIEW</h4>
+                    <ul>
+                        <li><a href="dashboard.html" class="nav-link"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="analytics.html" class="nav-link"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h4>SPORTS MANAGEMENT</h4>
+                    <ul>
+                        <li><a href="teams.html" class="nav-link"><i class="fas fa-users"></i> Teams</a></li>
+                        <li><a href="schedule.html" class="nav-link"><i class="fas fa-calendar-alt"></i> Schedule</a></li>
+                        <li><a href="drills.html" class="nav-link"><i class="fas fa-dumbbell"></i> Drill Library</a></li>
+                        <li><a href="players.html" class="nav-link"><i class="fas fa-user-friends"></i> View Players</a></li>
+                        <li><a href="attendance.html" class="nav-link active"><i class="fas fa-clipboard-check"></i> Attendance</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h4>COMMUNICATION</h4>
+                    <ul>
+                        <li><a href="announcements.html" class="nav-link"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                        <li><a href="chat.html" class="nav-link"><i class="fas fa-comments"></i> Chat</a></li>
+                        <li><a href="feedback.html" class="nav-link"><i class="fas fa-star"></i> Feedback</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h4>MEDICAL CENTER</h4>
+                    <ul>
+                        <li><a href="medical.html" class="nav-link"><i class="fas fa-heartbeat"></i> Medical Overview</a></li>
+                        <li><a href="injuries.html" class="nav-link"><i class="fas fa-band-aid"></i> Injury Management</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+        <div class="space-y-6">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h1>Attendance</h1>
+                    <p>Track and manage player attendance for training sessions</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline btn-sm">
+                        <svg class="icon-sm" style="margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export
+                    </button>
+                    <button class="btn btn-primary btn-sm">
+                        <svg class="icon-sm" style="margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        New Session
+                    </button>
+                </div>
+            </div>
+
+            <!-- Current Session Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="card-title">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0h6m-6 0l-1 12a2 2 0 002 2h6a2 2 0 002-2L16 7"></path>
+                                </svg>
+                                <span>Morning Training - Eagles</span>
+                            </div>
+                            <div class="card-description">
+                                2024-01-25 at 09:00 AM • Coach: Mike Johnson
+                            </div>
+                        </div>
+                        <span class="badge badge-green">Ongoing</span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="grid grid-cols-1 grid-cols-4">
+                        <div class="stat-item">
+                            <div class="stat-icon green">
+                                <svg class="icon-lg text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <p class="stat-number">22</p>
+                            <p class="stat-label">Present</p>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon red">
+                                <svg class="icon-lg text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <p class="stat-number">2</p>
+                            <p class="stat-label">Absent</p>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon yellow">
+                                <svg class="icon-lg text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                            </div>
+                            <p class="stat-number">1</p>
+                            <p class="stat-label">Excused</p>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon blue">
+                                <svg class="icon-lg text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                            <p class="stat-number">88%</p>
+                            <p class="stat-label">Attendance Rate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tabs-list">
+                    <button class="tabs-trigger active" onclick="switchTab('current')">Current Session</button>
+                    <button class="tabs-trigger" onclick="switchTab('history')">Attendance History</button>
+                    <button class="tabs-trigger" onclick="switchTab('analytics')">Analytics</button>
+                </div>
+
+                <!-- Current Session Tab -->
+                <div id="current" class="tabs-content active space-y-6">
+                    <!-- Search -->
+                    <div class="flex flex-col gap-4">
+                        <div class="search-container">
+                            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input type="text" class="search-input" placeholder="Search players by name, position, or number..." id="searchInput" oninput="filterPlayers()">
+                        </div>
+                        <button class="btn btn-outline">
+                            <svg class="icon-sm" style="margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                            </svg>
+                            Filter
+                        </button>
+                    </div>
+
+                    <!-- Attendance Sheet -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Attendance Sheet</div>
+                            <div class="card-description">Mark attendance for today's training session</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="space-y-4" id="playersList">
+                                <!-- Players will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div id="history" class="tabs-content space-y-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Attendance History</div>
+                            <div class="card-description">View past attendance records</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="space-y-4" id="historyList">
+                                <!-- History will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics" class="tabs-content space-y-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Attendance Analytics</div>
+                            <div class="card-description">View attendance trends and statistics</div>
+                        </div>
+                        <div class="card-content">
+                            <p>Analytics features coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/main.js"></script>
+    <script src="scripts/attendance.js"></script>
+
+            {
+                id: 1,
+                playerName: "John Smith",
+                playerNumber: 10,
+                position: "Forward",
+                status: "present",
+                arrivalTime: "08:55 AM",
+                notes: "",
+            },
+            {
+                id: 2,
+                playerName: "Mike Johnson Jr.",
+                playerNumber: 8,
+                position: "Midfielder",
+                status: "present",
+                arrivalTime: "09:00 AM",
+                notes: "",
+            },
+            {
+                id: 3,
+                playerName: "David Wilson",
+                playerNumber: 5,
+                position: "Defender",
+                status: "present",
+                arrivalTime: "08:58 AM",
+                notes: "",
+            },
+            {
+                id: 4,
+                playerName: "Chris Brown",
+                playerNumber: 1,
+                position: "Goalkeeper",
+                status: "present",
+                arrivalTime: "09:02 AM",
+                notes: "",
+            },
+            {
+                id: 5,
+                playerName: "Alex Davis",
+                playerNumber: 11,
+                position: "Forward",
+                status: "excused",
+                arrivalTime: "",
+                notes: "Injury recovery - cleared by medical team",
+            },
+            {
+                id: 6,
+                playerName: "Tom Wilson",
+                playerNumber: 7,
+                position: "Midfielder",
+                status: "absent",
+                arrivalTime: "",
+                notes: "No notification received",
+            },
+            {
+                id: 7,
+                playerName: "James Rodriguez",
+                playerNumber: 9,
+                position: "Forward",
+                status: "present",
+                arrivalTime: "08:57 AM",
+                notes: "",
+            },
+            {
+                id: 8,
+                playerName: "Marcus Thompson",
+                playerNumber: 4,
+                position: "Defender",
+                status: "present",
+                arrivalTime: "09:01 AM",
+                notes: "",
+            },
+            {
+                id: 9,
+                playerName: "Lisa Anderson",
+                playerNumber: 6,
+                position: "Midfielder",
+                status: "present",
+                arrivalTime: "08:59 AM",
+                notes: "",
+            },
+            {
+                id: 10,
+                playerName: "Emma Wilson",
+                playerNumber: 3,
+                position: "Defender",
+                status: "present",
+                arrivalTime: "09:03 AM",
+                notes: "",
+            },
+        ];
+
+        const attendanceHistory = [
+            {
+                date: "2024-01-24",
+                session: "Morning Training",
+                present: 23,
+                absent: 1,
+                excused: 1,
+                rate: 96,
+            },
+            {
+                date: "2024-01-23",
+                session: "Tactical Session",
+                present: 22,
+                absent: 2,
+                excused: 1,
+                rate: 92,
+            },
+            {
+                date: "2024-01-22",
+                session: "Strength Training",
+                present: 24,
+                absent: 1,
+                excused: 0,
+                rate: 96,
+            },
+            {
+                date: "2024-01-21",
+                session: "Match Practice",
+                present: 25,
+                absent: 0,
+                excused: 0,
+                rate: 100,
+            },
+            {
+                date: "2024-01-20",
+                session: "Recovery Session",
+                present: 21,
+                absent: 3,
+                excused: 1,
+                rate: 88,
+            },
+        ];
+
+        let filteredData = [...attendanceData];
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tabs-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active from all triggers
+            document.querySelectorAll('.tabs-trigger').forEach(trigger => {
+                trigger.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load content based on tab
+            if (tabName === 'history') {
+                renderHistory();
+            }
+        }
+
+        // Get status icon
+        function getStatusIcon(status) {
+            switch (status) {
+                case "present":
+                    return `<svg class="icon text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>`;
+                case "absent":
+                    return `<svg class="icon text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>`;
+                case "excused":
+                    return `<svg class="icon text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>`;
+                default:
+                    return "";
+            }
+        }
+
+        // Get status badge
+        function getStatusBadge(status) {
+            switch (status) {
+                case "present":
+                    return `<span class="badge badge-green">Present</span>`;
+                case "absent":
+                    return `<span class="badge badge-red">Absent</span>`;
+                case "excused":
+                    return `<span class="badge badge-yellow">Excused</span>`;
+                default:
+                    return `<span class="badge">Unknown</span>`;
+            }
+        }
+
+        // Get player initials
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('');
+        }
+
+        // Change player status
+        function changeStatus(playerId, newStatus) {
+            const player = attendanceData.find(p => p.id === playerId);
+            if (player) {
+                player.status = newStatus;
+                renderPlayers();
+            }
+        }
+
+        // Render players list
+        function renderPlayers() {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+
+            filteredData.forEach(player => {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'player-item';
+                playerDiv.innerHTML = `
+                    <div class="player-info">
+                        <div class="avatar">${getInitials(player.playerName)}</div>
+                        <div class="player-details">
+                            <h3>${player.playerName}</h3>
+                            <div class="player-meta">
+                                <span>#${player.playerNumber}</span>
+                                <span>${player.position}</span>
+                                ${player.arrivalTime ? `
+                                    <span style="display: flex; align-items: center; gap: 0.25rem;">
+                                        <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Arrived: ${player.arrivalTime}
+                                    </span>
+                                ` : ''}
+                            </div>
+                            ${player.notes ? `<div class="player-notes">${player.notes}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="player-actions">
+                        ${getStatusIcon(player.status)}
+                        ${getStatusBadge(player.status)}
+                        <div class="status-buttons">
+                            <button class="btn btn-sm ${player.status === 'present' ? 'btn-default' : 'btn-outline'}" onclick="changeStatus(${player.id}, 'present')">
+                                Present
+                            </button>
+                            <button class="btn btn-sm ${player.status === 'absent' ? 'btn-destructive' : 'btn-outline'}" onclick="changeStatus(${player.id}, 'absent')">
+                                Absent
+                            </button>
+                            <button class="btn btn-sm ${player.status === 'excused' ? 'btn-secondary' : 'btn-outline'}" onclick="changeStatus(${player.id}, 'excused')">
+                                Excused
+                            </button>
+                        </div>
+                    </div>
+                `;
+                playersList.appendChild(playerDiv);
+            });
+        }
+
+        // Filter players
+        function filterPlayers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = attendanceData.filter(player =>
+                player.playerName.toLowerCase().includes(searchTerm) ||
+                player.position.toLowerCase().includes(searchTerm) ||
+                player.playerNumber.toString().includes(searchTerm)
+            );
+            renderPlayers();
+        }
+
+        // Render history
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+
+            attendanceHistory.forEach(record => {
+                const historyDiv = document.createElement('div');
+                historyDiv.className = 'history-item';
+                
+                let rateClass = 'rate-excellent';
+                if (record.rate < 95) rateClass = 'rate-good';
+                if (record.rate < 90) rateClass = 'rate-poor';
+                
+                historyDiv.innerHTML = `
+                    <div>
+                        <h3 style="font-weight: 600; color: #111827;">${record.session}</h3>
+                        <p style="font-size: 0.875rem; color: #6b7280;">${record.date}</p>
+                    </div>
+                    <div class="history-stats">
+                        <div class="history-stat">
+                            <p class="text-green-600">${record.present}</p>
+                            <p>Present</p>
+                        </div>
+                        <div class="history-stat">
+                            <p class="text-red-600">${record.absent}</p>
+                            <p>Absent</p>
+                        </div>
+                        <div class="history-stat">
+                            <p class="text-yellow-600">${record.excused}</p>
+                            <p>Excused</p>
+                        </div>
+                        <div class="history-stat">
+                            <p class="attendance-rate ${rateClass}">${record.rate}%</p>
+                            <p>Rate</p>
+                        </div>
+                    </div>
+                `;
+                historyList.appendChild(historyDiv);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPlayers();
+        });
+    </script>
+</body>
+</html>
+
